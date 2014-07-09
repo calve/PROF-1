@@ -12,13 +12,14 @@ Utilisation de _Doxygen_ pour la génération de la documentation du programme (
 
 **License GNUGpl(V2)**
 
-TODO:
+###TODO:
 
 1.	Implémenter un main fonctionnel
 2.	Arriver à contacter la plateforme
 3.	Synchronisation automatique des TP (avec horlogerie)
 
-Contact:
+###Contact:
 
 Carette Antonin
+
 [Envoyer un e-mail](mailto:antonin.carette@gmail.com)
