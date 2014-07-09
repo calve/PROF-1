@@ -20,5 +20,5 @@ TODO:
 
 Contact:
 
-	Carette Antonin
-	[antonin.carette@gmail.com](mailto:antonin.carette@gmail.com)
+Carette Antonin
+[Envoyer un e-mail](mailto:antonin.carette@gmail.com)
