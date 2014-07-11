@@ -3,6 +3,7 @@ CC=gcc
 MAIN=src/main.c
 OPTIONS=-Wall -W
 CURLLINK=-lcurl
+ZLIBLINK=-lzip
 
 ifeq ($(DEMDEBUG),yes)
 	OPTIONS+= -g
@@ -15,7 +16,7 @@ endif
 
 main: $(MAIN)
 ifeq ($(DEMDEBUG),yes)
-	$(CC) -DNDEBUG $(OPTIONS) $(MAIN) $(CURLLINK) -o prof
+	$(CC) -DNDEBUG $(OPTIONS) $(MAIN) $(CURLLINK) $(ZLIBLINK) -o prof
 else
 	$(CC) $(OPTIONS) $(MAIN) $(CURLLINK) -o prof
 endif
