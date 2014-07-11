@@ -8,6 +8,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
+#include <curl/curl.h>
+
+/**
+ * \def FALSE
+ * \brief Macro permettant d'associer le bit 0 à FALSE
+ */
+#define FALSE 0
+
+/**
+ * \def TRUE
+ * \brief Macro permettant d'associer le bit 1 à TRUE
+ */
+#define TRUE 1
 
 /** 
   * \def LONGUEUR_ID
@@ -20,6 +34,22 @@
  * \brief Macro concernant la longueur maximale d'un mot-de-passe étudiant - ici: 15 caractères
  */
 #define LONGUEUR_MDP 15
+
+/**
+ * \def URL
+ * \brief Macro contenant l'URL de la plateforme PROF
+ */
+#define URL_PROF "https://prof.fil.univ-lille1.fr"
+
+/**
+ * \def DEBUG
+ * \brief Macro permettant d'initialiser d'autres macros, selon le bit attribué au debuggage du programme
+ */
+#ifdef NDEBUG
+#define DEBUG 1
+#else
+#define DEBUG 0
+#endif 
 
 /**
  * \fn static void supprimerSuite(char caractereRecherche)
@@ -45,7 +75,9 @@ static void supprimerSuite(char caractereRecherche) {
  */
 static void supprimeCaractere(char* ligne, char caractere) {
 
-	//On recherche après le caractère donné en paramètre, dans la chaîne de caractères
+	/*
+	On recherche après le caractère donné en paramètre, dans la chaîne de caractères
+	*/
 	char *saut = strchr(ligne, caractere);
 
 	if (saut)
@@ -93,6 +125,7 @@ int main() {
 
 	char identifiantFIL[LONGUEUR_ID];
 	char motDePasseFIL[LONGUEUR_MDP];
+	CURL *handle;
 	
 	printf("Bienvenue sur Prof!\n");
 	
@@ -100,20 +133,48 @@ int main() {
 
 	demandeMDP(motDePasseFIL);
 
-	//Connection sur PROF (prof.fil.univ-lille1.fr) avec ID + MDP
+	/*
+	Connection sur PROF (prof.fil.univ-lille1.fr) avec ID + MDP
+	*/
 
-	printf("Attente de login...\n");
-	printf("Login: %s\n",identifiantFIL);
-	printf("Mdp: %s\n",motDePasseFIL);
+	printf("Demande de login...\n");
 
-	//Connection ok -> On continue
-	//Connection perdue -> On redemande la combinaison ID + MDP
+	handle = curl_easy_init();
+	
+	/*
+	Début de connexion
+	*/
 
-	//Demande de matière
+	assert(handle != NULL);
 
-	//Demande de chemin du TP
+	/*
+	Connexion OK
+	*/
 
-	//Envoi!
+	curl_easy_setopt(handle, CURLOPT_URL, URL_PROF);
+	curl_easy_setopt(handle, CURLOPT_VERBOSE, DEBUG);
+
+	/*
+	Connexion perdue -> On redemande la combinaison ID + MDP
+	*/
+	
+	/*
+	Demande de la matière
+	*/
+	
+	/*
+	Demande du chemin où se trouve le TP
+	*/
+	
+	/*
+	Si chemin vers dossier, on zip le tout, on renomme et on envoie; sinon, on envoie
+	*/
+
+	/*
+	Envoi!
+	*/
+	
+	curl_easy_cleanup(handle);
 
 	return 0;
 
