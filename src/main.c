@@ -115,6 +115,55 @@ static void demandeMDP(char* mdpFIL) {
 
 }
 
+/**
+ * \fn int verificationChemin(char* cheminFichier)
+ * \brief Fonction permettant de vérifier le chemin passé en paramètre - c'est-à-dire de vérifier si le chemin existe réellement
+ *
+ * \param cheminFichier Le chemin du fichier/répertoire à vérifier
+ * \return Retourne un entier: 0 si le chemin est correct, 1 s'il ne l'est pas
+ */
+static int verificationChemin(char* cheminFichier) {
+
+}
+
+/**
+ * \fn int verificationZip(char* cheminFichier)
+ * \brief Fonction permettant de vérifier si le fichier/dossier passé en paramètre est déjà zippé ou non - s'il ne l'est pas, on le fait
+ *
+ * \param cheminFichier Le chemin du fichier/répertoire à vérifier
+ * \return Retourne un entier: 0 si le fichier a bien été zippé / est déjà zippé, 1 s'il ne l'est pas
+ */
+static int verificationChemin(char* cheminFichier) {
+
+}
+
+/**
+ * \fn int demandeChemin(char *cheminFichier)
+ * \brief Fonction permettant de demander le chemin du dossier/fichier
+ *
+ * \param cheminFichier Une chaine de caractères (PATH_NAME max), destinée à recevoir le chemin donné au dossier/fichier
+ * \return Retourne un entier: 0 si la fonction a bien été exécuté, 1 si erreur
+ */
+static int demandeChemin(char *cheminFichier) {
+
+	char* cheminEntre = "";
+
+	printf("Entrez le chemin du fichier/dossier à transférer sur PROF:\n");
+	printf("~/");
+	fgets(cheminEntre, PATH_NAME, stdin);
+	strcat(cheminFichier, cheminEntre);
+	supprimeCaractere(cheminFichier, '\n');
+	if (verificationChemin(cheminFichier)) {
+		if(verificationZip(cheminFichier))
+			return 0;
+		else 
+			return 1;
+	}
+	else
+		return 1;
+
+}
+
 /** 
  * \fn int main()
  * \brief Main du programme PROF
@@ -125,7 +174,9 @@ int main() {
 
 	char identifiantFIL[LONGUEUR_ID];
 	char motDePasseFIL[LONGUEUR_MDP];
-	CURL *handle;
+	char cheminFichier[PATH_NAME] = "~/";
+	CURL *curl;
+	CURLcode ccode;
 	
 	printf("Bienvenue sur Prof!\n");
 	
@@ -139,20 +190,24 @@ int main() {
 
 	printf("Demande de login...\n");
 
-	handle = curl_easy_init();
+	curl = curl_easy_init();
 	
 	/*
 	Début de connexion
 	*/
 
-	assert(handle != NULL);
+	assert(curl);
 
 	/*
 	Connexion OK
 	*/
 
-	curl_easy_setopt(handle, CURLOPT_URL, URL_PROF);
-	curl_easy_setopt(handle, CURLOPT_VERBOSE, DEBUG);
+	/*
+	Demande du chemin où se trouve le TP
+	*/
+
+	curl_easy_setopt(curl, CURLOPT_URL, URL_PROF);
+	curl_easy_setopt(curl, CURLOPT_VERBOSE, DEBUG);
 
 	/*
 	Connexion perdue -> On redemande la combinaison ID + MDP
@@ -163,10 +218,6 @@ int main() {
 	*/
 	
 	/*
-	Demande du chemin où se trouve le TP
-	*/
-	
-	/*
 	Si chemin vers dossier, on zip le tout, on renomme et on envoie; sinon, on envoie
 	*/
 
@@ -174,7 +225,7 @@ int main() {
 	Envoi!
 	*/
 	
-	curl_easy_cleanup(handle);
+	curl_easy_cleanup(curl);
 
 	return 0;
 
