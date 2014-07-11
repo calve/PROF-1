@@ -7,5 +7,10 @@ all: main
 main: $(MAIN)
 	gcc $(OPTIONS) $(MAIN) $(CURLLINK) -o prof
 
-clean:
+cleanall: cleanobj cleanprg
+
+cleanobj:
 	rm *.o
+
+cleanprg:
+	rm prof
