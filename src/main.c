@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <errno.h>
+#include <unistd.h>
+#include <pwd.h>
 #include <sys/types.h>
 #include <dirent.h>
 
@@ -54,7 +57,9 @@
 #define DEBUG 1
 #else
 #define DEBUG 0
-#endif 
+#endif
+
+ struct zip;
 
 /**
  * \fn static void supprimerSuite(char caractereRecherche)
@@ -182,8 +187,20 @@ static int creerZip(const char* cheminFichier, struct zip *fichierZip) {
 
 	repertoire = opendir(cheminFichier);
 
+	if (repertoire == NULL) {
+		printf("ERREUR: Répertoire NULL, dans creerZip()\n");
+		exit(EXIT_FAILURE);
+	}
+
+	if (fichierZip == NULL) {
+		printf("ERREUR: fichierZip NULL\n");
+		exit(EXIT_FAILURE);
+	}
+
 	do {
 		if ((structRepert = readdir(repertoire)) != NULL)
+
+			cheminAAjouter = "";
 			/*
 			Chemin vers fichier/répertoire
 			*/
@@ -193,6 +210,14 @@ static int creerZip(const char* cheminFichier, struct zip *fichierZip) {
 			*/
 			cheminAAjouter = strcat(cheminAAjouter, "/");
 			cheminAAjouter = strcat(cheminAAjouter, structRepert->d_name);
+
+			char* dname = structRepert->d_name;
+
+			printf("cheminAAjouter: %s\n",cheminAAjouter);
+
+			if (strcmp(dname, ".")  == 0 || strcmp(dname, ".."))
+				continue;
+
 			/*
 			Si fichier -> On prend tout le contenu de celui-ci dans un buffer, compression, on ajoute, on libère la mémoire du buffer
 			*/
@@ -200,25 +225,24 @@ static int creerZip(const char* cheminFichier, struct zip *fichierZip) {
 				long taille = tailleFichier(cheminAAjouter);
 				data = malloc(sizeof(char) * taille);
 				lireFichier(cheminAAjouter, data);
-				source = zip_source_buffer(fichierZip, data, taille, 0);
+				source = zip_source_buffer(fichierZip, data, (int)taille, 0);
 				/*
 				Ajout du fichier cheminAAjouter dans zipAAjouter, qui lui meme sera ajouté dans fichierZip - on garde l'encodag UTF-8
 				*/
-				zip_file_add(fichierZip, structRepert->d_name, source, ZIP_FL_ENC_UTF_8);
+				zip_file_add(fichierZip, dname, source, ZIP_FL_ENC_UTF_8);
 				free(data);
 			}
 			else
 				/*
 				Ajout du répertoire en entier
 				*/
-				zip_dir_add(fichierZip, structRepert->d_name, ZIP_FL_ENC_UTF_8);
+				zip_dir_add(fichierZip, dname, ZIP_FL_ENC_UTF_8);
 	}
 	while (structRepert != NULL);
 
 	closedir(repertoire);	
 
-	exit(EXIT_SUCCESS);
-
+	return 0;
 }
 
 /**
@@ -233,15 +257,24 @@ static int verificationChemin(char* cheminFichier) {
 	DIR* repertoire = NULL;
 	repertoire = opendir(cheminFichier);
 	
+	printf("Vérification de l'existence du répertoire %s\n",cheminFichier);
+
 	/*
 	Si problème sur l'ouverture du répertoire, on averti l'utilisateur
 	*/
 	if (repertoire == NULL) {
-		printf("ERREUR: Répertoire non trouvé pour %s",cheminFichier);
+		if (errno == ENOENT)
+			printf("ERREUR: Répertoire non trouvé pour %s\n",cheminFichier);
+		if (errno == ENOTDIR)
+			printf("ERREUR: La cible n'est pas un répertoire\n");
+		closedir(repertoire);
 		exit(EXIT_FAILURE);
 	}
-
-	exit(EXIT_SUCCESS);
+	else {
+		printf("Répertoire %s trouvé\n", cheminFichier);
+		closedir(repertoire);
+		return 0;
+	}
 }
 
 /**
@@ -255,27 +288,33 @@ static int verificationZip(char* cheminFichier) {
 
 	int err = 0;
 	struct zip *fichierZip = NULL;
-	const char* constCheminFichier = strcpy(constCheminFichier, cheminFichier);
+	char* constCheminFichier = malloc(sizeof(char) * tailleFichier(cheminFichier));
 
-	fichierZip = zip_open(cheminFichier, ZIP_EXCL, &err);
+	strcpy(constCheminFichier, cheminFichier);
 
-	/*
-	Le fichier existe déjà en version zippé - on s'arrete là pour la vérification
-	*/
-	if (&err == ZIP_ER_EXISTS) {
-		printf("Fichier déjà zippé\n");
-		exit(EXIT_SUCCESS);
-	}
-	/*
-	Le fichier/répertoire n'est pas zippé - on le zippe
-	*/
-	if (&err == ZIP_ER_NOZIP)
-		if (creerZip(constCheminFichier, fichierZip) == EXIT_FAILURE)
+	fichierZip = zip_open(cheminFichier, ZIP_CREATE, &err);
+
+	printf("Vérification concernant la compression Zip...\n");
+
+	if (fichierZip == NULL) {
+		/*
+		Le pathname est nul
+		*/
+		if (err == ZIP_ER_INVAL) {
+			printf("ERREUR: Chemin non-trouvé - verificationZip()\n");
 			exit(EXIT_FAILURE);
-	else
-		exit(EXIT_FAILURE);
+		};
 
-	exit(EXIT_SUCCESS);
+		if (err == ZIP_ER_NOENT) {
+			printf("ERREUR: Chemin non-existant - verificationZip()\n");
+			exit(EXIT_FAILURE);
+		};
+	}
+	else {
+		creerZip(constCheminFichier, fichierZip);
+	}
+
+	return 0;
 
 }
 
@@ -288,22 +327,29 @@ static int verificationZip(char* cheminFichier) {
  */
 static int demandeChemin(char *cheminFichier) {
 
-	char* cheminEntre = "";
+	char* cheminEntre = malloc(sizeof(char) * PATH_MAX);
+	struct passwd* passwdEnt = getpwuid(getuid());
+	char* home = passwdEnt->pw_dir;
+
+	home = strcat(home, "/");
 
 	printf("Entrez le chemin du fichier/dossier à transférer sur PROF:\n");
-	printf("~/");
+	printf("%s",home);
 	fgets(cheminEntre, PATH_MAX, stdin);
-	strcat(cheminFichier, cheminEntre);
-	supprimeCaractere(cheminFichier, '\n');
-	if (verificationChemin(cheminFichier)) {
-		if(verificationZip(cheminFichier))
-			exit(EXIT_SUCCESS);
+	supprimeCaractere(cheminEntre, '\n');
+	cheminFichier = strcat(home, cheminEntre);
+
+	/*
+	Vérification chemin + zip
+	*/
+	if (verificationChemin(cheminFichier) == 0) {
+		if (verificationZip(cheminFichier) == 0)
+			return 0;
 		else 
 			exit(EXIT_FAILURE);
 	}
 	else
 		exit(EXIT_FAILURE);
-
 }
 
 /** 
