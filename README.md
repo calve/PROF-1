@@ -10,9 +10,11 @@ Licence GNUGpl - Version 2
 
 Encore en développement - test sur machine **Gnu/Linux** et **FreeBSD** (_MacOS 10.9_).
 
-Utilisation de _Doxygen_ pour la génération de la documentation du programme (Free Software - [Website](http://www.stack.nl/~dimitri/doxygen/)).
+Utilisation de _Doxygen_ pour la génération de la documentation du programme (Free Software - [site internet](http://www.stack.nl/~dimitri/doxygen/)).
 
-Utilisation de l'interface _libcurl_ (voir [Website](http://curl.haxx.se/libcurl/) pour la documentation, et l'installation).
+Utilisation de l'interface _libcurl_ (voir [site internet](http://curl.haxx.se/libcurl/) pour la documentation et l'installation).
+
+Utilisation de la librairie _libzip_ (voir [site internet](http://www.nih.at/libzip/) pour la documentation et l'installation).
 
 ####TODO:
 
