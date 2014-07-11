@@ -1,11 +1,24 @@
-MAIN = src/main.c
-OPTIONS = -Wall -Werror -pedantic
-CURLLINK = -lcurl
+DEMDEBUG=yes
+CC=gcc
+MAIN=src/main.c
+OPTIONS=-Wall -W
+CURLLINK=-lcurl
+
+ifeq ($(DEMDEBUG),yes)
+	OPTIONS+= -g
+endif
 
 all: main
+ifeq ($(DEMDEBUG),yes)
+	@echo "Génération en mode debug"
+endif
 
 main: $(MAIN)
-	gcc $(OPTIONS) $(MAIN) $(CURLLINK) -o prof
+ifeq ($(DEMDEBUG),yes)
+	$(CC) -DNDEBUG $(OPTIONS) $(MAIN) $(CURLLINK) -o prof
+else
+	$(CC) $(OPTIONS) $(MAIN) $(CURLLINK) -o prof
+endif
 
 cleanall: cleanobj cleanprg
 
