@@ -9,7 +9,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
 #include <curl/curl.h>
+#include <zip.h>
 
 /**
  * \def FALSE
@@ -102,7 +107,7 @@ static void demandeLogin(char* idFIL) {
 }
 
 /**
- * \fn void demandeMDP(char* mdpFIL)
+ * \fn static void demandeMDP(char* mdpFIL)
  * \brief Fonction permettant de demander le mot-de-passe associé au login de l'utilisateur
  *
  * \param mdpFIL Une chaîne de caractères (15 caractères), destinée à recevoir le mot-de-passe de l'utilisateur
@@ -116,33 +121,170 @@ static void demandeMDP(char* mdpFIL) {
 }
 
 /**
- * \fn int verificationChemin(char* cheminFichier)
+ * \fn static long tailleFichier(char* cheminFichier)
+ * \brief Fonction permettant d'obtenir la taille d'un fichier
+ *
+ * \param cheminFichier Le chemin du fichier pour lequel on veut connaitre la taille
+ * \return La taille du fichier - format long
+ */ 
+static long tailleFichier(char* cheminFichier) {
+
+	FILE *fichier;
+    long size;
+ 
+    fichier=fopen(cheminFichier,"rb");
+ 
+    if(fichier)
+    {
+            fseek (fichier, 0, SEEK_END);
+            size=ftell (fichier);
+            fclose (fichier);          
+    }
+    return size;
+
+}
+
+/**
+ * \fn static void lireFichier(char* cheminFichier, char* data)
+ * \brief Fonction permettant de lire et copier le contenu du fichier cheminFichier, dans data
+ *
+ * \param cheminFichier Le chemin du fichier que l'on veut lire
+ * \param data La structure de données représentant les données contenues dans cheminFichier
+ */
+static void lireFichier(char* cheminFichier, char* data) {
+
+	char caractere;
+	int i = 0;
+	FILE *fichier = fopen(cheminFichier, "r");
+	while ((caractere = fgetc(fichier)) != EOF) {
+		data[i] = caractere;
+		i++;
+	};
+	fclose(fichier);
+
+}
+
+/**
+ * \fn static int creerZip(char* cheminFichier, struct zip *fichierZip)
+ * \brief Fonction permettant de créer un zip selon le chemin donné en paramètre
+ *
+ * \param cheminFichier Le chemin du fichier/répertoire à zipper
+ * \param fichierZip Le fichier zip dans lequel on ajoutera tous les fichiers et sous-dossiers de celui pointé par cheminFichier
+ * \return Retourne un entier: EXIT_SUCCESS si le zip à bien fonctionner, EXIT_FAILURE si le répertoire/fichier n'a pu etre zippé
+ */
+static int creerZip(const char* cheminFichier, struct zip *fichierZip) {
+
+	char* cheminAAjouter = malloc(sizeof(char) * PATH_MAX);
+	struct zip_source *source = NULL;
+	DIR* repertoire = NULL;
+	struct dirent *structRepert = NULL;
+	char* data = "";
+
+	repertoire = opendir(cheminFichier);
+
+	do {
+		if ((structRepert = readdir(repertoire)) != NULL)
+			/*
+			Chemin vers fichier/répertoire
+			*/
+			cheminAAjouter = strcpy(cheminAAjouter, cheminFichier);
+			/*
+			TODO: Vérifier si le "/" n'est pas déjà mis...
+			*/
+			cheminAAjouter = strcat(cheminAAjouter, "/");
+			cheminAAjouter = strcat(cheminAAjouter, structRepert->d_name);
+			/*
+			Si fichier -> On prend tout le contenu de celui-ci dans un buffer, compression, on ajoute, on libère la mémoire du buffer
+			*/
+			if (structRepert->d_type == DT_REG) {
+				long taille = tailleFichier(cheminAAjouter);
+				data = malloc(sizeof(char) * taille);
+				lireFichier(cheminAAjouter, data);
+				source = zip_source_buffer(fichierZip, data, taille, 0);
+				/*
+				Ajout du fichier cheminAAjouter dans zipAAjouter, qui lui meme sera ajouté dans fichierZip - on garde l'encodag UTF-8
+				*/
+				zip_file_add(fichierZip, structRepert->d_name, source, ZIP_FL_ENC_UTF_8);
+				free(data);
+			}
+			else
+				/*
+				Ajout du répertoire en entier
+				*/
+				zip_dir_add(fichierZip, structRepert->d_name, ZIP_FL_ENC_UTF_8);
+	}
+	while (structRepert != NULL);
+
+	closedir(repertoire);	
+
+	exit(EXIT_SUCCESS);
+
+}
+
+/**
+ * \fn static int verificationChemin(char* cheminFichier)
  * \brief Fonction permettant de vérifier le chemin passé en paramètre - c'est-à-dire de vérifier si le chemin existe réellement
  *
  * \param cheminFichier Le chemin du fichier/répertoire à vérifier
- * \return Retourne un entier: 0 si le chemin est correct, 1 s'il ne l'est pas
+ * \return Retourne un entier: EXIT_SUCCESS si le chemin est correct, EXIT_FAILURE s'il ne l'est pas
  */
 static int verificationChemin(char* cheminFichier) {
 
+	DIR* repertoire = NULL;
+	repertoire = opendir(cheminFichier);
+	
+	/*
+	Si problème sur l'ouverture du répertoire, on averti l'utilisateur
+	*/
+	if (repertoire == NULL) {
+		printf("ERREUR: Répertoire non trouvé pour %s",cheminFichier);
+		exit(EXIT_FAILURE);
+	}
+
+	exit(EXIT_SUCCESS);
 }
 
 /**
- * \fn int verificationZip(char* cheminFichier)
+ * \fn static int verificationZip(char* cheminFichier)
  * \brief Fonction permettant de vérifier si le fichier/dossier passé en paramètre est déjà zippé ou non - s'il ne l'est pas, on le fait
  *
  * \param cheminFichier Le chemin du fichier/répertoire à vérifier
- * \return Retourne un entier: 0 si le fichier a bien été zippé / est déjà zippé, 1 s'il ne l'est pas
+ * \return Retourne un entier: EXIT_SUCCESS si le fichier a bien été zippé / est déjà zippé, EXIT_FAILURE s'il ne l'est pas
  */
-static int verificationChemin(char* cheminFichier) {
+static int verificationZip(char* cheminFichier) {
+
+	int err = 0;
+	struct zip *fichierZip = NULL;
+	const char* constCheminFichier = strcpy(constCheminFichier, cheminFichier);
+
+	fichierZip = zip_open(cheminFichier, ZIP_EXCL, &err);
+
+	/*
+	Le fichier existe déjà en version zippé - on s'arrete là pour la vérification
+	*/
+	if (&err == ZIP_ER_EXISTS) {
+		printf("Fichier déjà zippé\n");
+		exit(EXIT_SUCCESS);
+	}
+	/*
+	Le fichier/répertoire n'est pas zippé - on le zippe
+	*/
+	if (&err == ZIP_ER_NOZIP)
+		if (creerZip(constCheminFichier, fichierZip) == EXIT_FAILURE)
+			exit(EXIT_FAILURE);
+	else
+		exit(EXIT_FAILURE);
+
+	exit(EXIT_SUCCESS);
 
 }
 
 /**
- * \fn int demandeChemin(char *cheminFichier)
+ * \fn static int demandeChemin(char *cheminFichier)
  * \brief Fonction permettant de demander le chemin du dossier/fichier
  *
- * \param cheminFichier Une chaine de caractères (PATH_NAME max), destinée à recevoir le chemin donné au dossier/fichier
- * \return Retourne un entier: 0 si la fonction a bien été exécuté, 1 si erreur
+ * \param cheminFichier Une chaine de caractères (PATH_MAX max), destinée à recevoir le chemin donné au dossier/fichier
+ * \return Retourne un entier: EXIT_SUCCESS si la fonction a bien été exécuté, EXIT_FAILURE si erreur
  */
 static int demandeChemin(char *cheminFichier) {
 
@@ -150,17 +292,17 @@ static int demandeChemin(char *cheminFichier) {
 
 	printf("Entrez le chemin du fichier/dossier à transférer sur PROF:\n");
 	printf("~/");
-	fgets(cheminEntre, PATH_NAME, stdin);
+	fgets(cheminEntre, PATH_MAX, stdin);
 	strcat(cheminFichier, cheminEntre);
 	supprimeCaractere(cheminFichier, '\n');
 	if (verificationChemin(cheminFichier)) {
 		if(verificationZip(cheminFichier))
-			return 0;
+			exit(EXIT_SUCCESS);
 		else 
-			return 1;
+			exit(EXIT_FAILURE);
 	}
 	else
-		return 1;
+		exit(EXIT_FAILURE);
 
 }
 
@@ -168,21 +310,22 @@ static int demandeChemin(char *cheminFichier) {
  * \fn int main()
  * \brief Main du programme PROF
  *
- * \return Entier valant le retour de l'exécution de la fonction: 0 si le programme se termine correctement, autre sinon...
+ * \return Retour système: EXIT_SUCCESS si le programme se termine correctement, EXIT_FAILURE sinon...
  */
 int main() {
 
 	char identifiantFIL[LONGUEUR_ID];
 	char motDePasseFIL[LONGUEUR_MDP];
-	char cheminFichier[PATH_NAME] = "~/";
+	char cheminFichier[PATH_MAX] = "~/";
 	CURL *curl;
-	CURLcode ccode;
 	
 	printf("Bienvenue sur Prof!\n");
 	
 	demandeLogin(identifiantFIL);
 
 	demandeMDP(motDePasseFIL);
+
+	demandeChemin(cheminFichier);
 
 	/*
 	Connection sur PROF (prof.fil.univ-lille1.fr) avec ID + MDP
@@ -200,10 +343,6 @@ int main() {
 
 	/*
 	Connexion OK
-	*/
-
-	/*
-	Demande du chemin où se trouve le TP
 	*/
 
 	curl_easy_setopt(curl, CURLOPT_URL, URL_PROF);
@@ -227,6 +366,6 @@ int main() {
 	
 	curl_easy_cleanup(curl);
 
-	return 0;
+	exit(EXIT_SUCCESS);
 
 }
