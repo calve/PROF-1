@@ -148,26 +148,6 @@ static long tailleFichier(char* cheminFichier) {
 }
 
 /**
- * \fn static void lireFichier(char* cheminFichier, char* data)
- * \brief Fonction permettant de lire et copier le contenu du fichier cheminFichier, dans data
- *
- * \param cheminFichier Le chemin du fichier que l'on veut lire
- * \param data La structure de données représentant les données contenues dans cheminFichier
- */
-static void lireFichier(char* cheminFichier, char* data) {
-
-	char caractere;
-	int i = 0;
-	FILE *fichier = fopen(cheminFichier, "r");
-	while ((caractere = fgetc(fichier)) != EOF) {
-		data[i] = caractere;
-		i++;
-	};
-	fclose(fichier);
-
-}
-
-/**
  * \fn static int ajouterDansZip(char* cheminFichier, struct zip *fichierZip)
  * \brief Fonction permettant de créer un zip selon le chemin donné en paramètre
  *
@@ -258,18 +238,23 @@ static int verificationChemin(char* cheminFichier) {
 	DIR* repertoire = NULL;
 	repertoire = opendir(cheminFichier);
 	
-	printf("Vérification de l'existence du répertoire %s\n",cheminFichier);
+	printf("Vérification de l'existence du répertoire/fichier %s\n",cheminFichier);
 
 	/*
 	Si problème sur l'ouverture du répertoire, on averti l'utilisateur
 	*/
 	if (repertoire == NULL) {
-		if (errno == ENOENT)
+		if (errno == ENOTDIR) {
+			printf("Fichier trouvé\n");
+			closedir(repertoire);
+			return 0;
+		}
+		else {
 			printf("ERREUR: Répertoire non trouvé pour %s\n",cheminFichier);
-		if (errno == ENOTDIR)
-			printf("ERREUR: La cible n'est pas un répertoire\n");
-		closedir(repertoire);
-		exit(EXIT_FAILURE);
+			closedir(repertoire);
+			exit(EXIT_FAILURE);
+		}
+		
 	}
 	else {
 		printf("Répertoire %s trouvé\n", cheminFichier);
@@ -279,20 +264,56 @@ static int verificationChemin(char* cheminFichier) {
 }
 
 /**
+ * \fn static int estArchiveZip(char* cheminFichierDonne)
+ * \brief Fonction permettant de vérifier si le fichier/répertoire donné en paramètre est déjà zippé ou non
+ *
+ * \param cheminFichierDonne Le chemin du fichier/répertoire à vérifier
+ * \return Retourne un entier: 0 s'il s'agit d'un fichier/répertoire non-zippé, 1 sinon
+ */
+static int estArchiveZip(char* cheminFichierDonne) {
+
+	int err = 0;
+	struct zip *fichierZip = NULL;
+
+	/*
+	Vérification de l'archive zip -> si oui, on stoppe - sinon, on crée l'archive
+	*/
+	fichierZip = zip_open(cheminFichierDonne, ZIP_EXCL, &err);
+
+	if (fichierZip == NULL) {
+
+		if (err == ZIP_ER_EXISTS) {
+			printf("Le fichier entré, donné par %s est une archive ZIP... Pas de compression prévue\n", cheminFichierDonne);
+			return 1;
+		}
+	}
+
+	return 0;
+
+}
+
+/**
  * \fn static int verificationZip(char* cheminFichier)
- * \brief Fonction permettant de vérifier si le fichier/dossier passé en paramètre est déjà zippé ou non - s'il ne l'est pas, on le fait
+ * \brief Fonction permettant de vérifier si le fichier/répertoire passé en paramètre est déjà zippé ou non - s'il ne l'est pas, on le fait
  *
  * \param cheminFichier Le chemin du fichier/répertoire à vérifier
- * \return Retourne un entier: EXIT_SUCCESS si le fichier a bien été zippé / est déjà zippé, EXIT_FAILURE s'il ne l'est pas
+ * \return Retourne un entier: 0 si le fichier a bien été zippé / est déjà zippé, EXIT_FAILURE s'il ne l'est pas
  */
 static int verificationZip(char* cheminFichier) {
 
 	int err = 0;
 	struct zip *fichierZip = NULL;
 	char* constCheminFichier = malloc(sizeof(char) * tailleFichier(cheminFichier));
-
+	
+	/*
+	 *Si le fichier est donné sous format .zip, celà ne nécessite pas de continuer,
+	 *sinon on va créer l'archive en apposant le .zip à la fin du chemin donné
+	 */
 	strcpy(constCheminFichier, cheminFichier);
-	constCheminFichier = strcat(constCheminFichier, ".zip");
+	if (estArchiveZip(constCheminFichier) == 0)
+		constCheminFichier = strcat(constCheminFichier, ".zip");
+	else
+		return 0;
 
 	/*
 	On ne crée pas l'archive si et seulement si elle existe
@@ -313,11 +334,6 @@ static int verificationZip(char* cheminFichier) {
 		if (err == ZIP_ER_NOENT) {
 			printf("ERREUR: Chemin non-existant - verificationZip()\n");
 			exit(EXIT_FAILURE);
-		};
-
-		if (err == ZIP_ER_EXISTS) {
-			printf("Archive existante\n");
-			return 0;
 		};
 
 		printf("ERREUR: Ouverture du fichier impossible...\n");
