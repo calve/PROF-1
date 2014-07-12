@@ -180,7 +180,6 @@ static int ajouterDansZip(const char* cheminFichier, struct zip *fichierZip) {
 	struct zip_source *source = NULL;
 	DIR* repertoire = NULL;
 	struct dirent *structRepert = NULL;
-	char* data = "";
 
 	printf("cheminActuel: %s\n",cheminFichier);
 
@@ -222,15 +221,14 @@ static int ajouterDansZip(const char* cheminFichier, struct zip *fichierZip) {
 			Si fichier -> On prend tout le contenu de celui-ci dans un buffer, compression, on ajoute, on libère la mémoire du buffer
 			*/
 			if (structRepert->d_type == DT_REG) {
-				long taille = tailleFichier(cheminAAjouter);
-				data = malloc(sizeof(char) * taille);
-				lireFichier(cheminAAjouter, data);
-				source = zip_source_buffer(fichierZip, data, (int)taille, 0);
+				if ((source = zip_source_file(fichierZip, cheminAAjouter, (off_t)0, (off_t)0)) == 0) {
+					printf("ERREUR: Ajout de source impossible dans le fichier zip");
+					exit(EXIT_FAILURE);
+				};
 				/*
 				Ajout du fichier cheminAAjouter dans zipAAjouter, qui lui meme sera ajouté dans fichierZip - on garde l'encodag UTF-8
 				*/
 				zip_file_add(fichierZip, dname, source, ZIP_FL_ENC_UTF_8);
-				free(data);
 			}
 			else {
 				/*
