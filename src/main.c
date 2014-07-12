@@ -149,11 +149,11 @@ static long tailleFichier(char* cheminFichier) {
 
 /**
  * \fn static int ajouterDansZip(char* cheminFichier, struct zip *fichierZip)
- * \brief Fonction permettant de créer un zip selon le chemin donné en paramètre
+ * \brief Fonction permettant d'ajouter un fichier/répertoire, dans un zip
  *
- * \param cheminFichier Le chemin du fichier/répertoire à zipper
+ * \param cheminFichier Le chemin du fichier/répertoire à ajouter
  * \param fichierZip Le fichier zip dans lequel on ajoutera tous les fichiers et sous-dossiers de celui pointé par cheminFichier
- * \return Retourne un entier: EXIT_SUCCESS si le zip à bien fonctionner, EXIT_FAILURE si le répertoire/fichier n'a pu etre zippé
+ * \return Retourne un entier: 0 si l'action zip à bien fonctionner, EXIT_FAILURE si le répertoire/fichier n'a pu etre zippé
  */
 static int ajouterDansZip(const char* cheminFichier, struct zip *fichierZip) {
 
