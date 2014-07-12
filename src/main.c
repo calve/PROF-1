@@ -8,16 +8,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <zip.h>
+#include <curl/curl.h>
 #include <assert.h>
 #include <errno.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <sys/types.h>
 #include <dirent.h>
-
-
-#include <curl/curl.h>
-#include <zip.h>
 
 /**
  * \def FALSE
@@ -170,25 +168,26 @@ static void lireFichier(char* cheminFichier, char* data) {
 }
 
 /**
- * \fn static int creerZip(char* cheminFichier, struct zip *fichierZip)
+ * \fn static int ajouterDansZip(char* cheminFichier, struct zip *fichierZip)
  * \brief Fonction permettant de créer un zip selon le chemin donné en paramètre
  *
  * \param cheminFichier Le chemin du fichier/répertoire à zipper
  * \param fichierZip Le fichier zip dans lequel on ajoutera tous les fichiers et sous-dossiers de celui pointé par cheminFichier
  * \return Retourne un entier: EXIT_SUCCESS si le zip à bien fonctionner, EXIT_FAILURE si le répertoire/fichier n'a pu etre zippé
  */
-static int creerZip(const char* cheminFichier, struct zip *fichierZip) {
+static int ajouterDansZip(const char* cheminFichier, struct zip *fichierZip) {
 
-	char* cheminAAjouter = malloc(sizeof(char) * PATH_MAX);
 	struct zip_source *source = NULL;
 	DIR* repertoire = NULL;
 	struct dirent *structRepert = NULL;
 	char* data = "";
 
+	printf("cheminActuel: %s\n",cheminFichier);
+
 	repertoire = opendir(cheminFichier);
 
 	if (repertoire == NULL) {
-		printf("ERREUR: Répertoire NULL, dans creerZip()\n");
+		printf("ERREUR: Répertoire NULL, dans ajouterDansZip()\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -198,9 +197,10 @@ static int creerZip(const char* cheminFichier, struct zip *fichierZip) {
 	}
 
 	do {
-		if ((structRepert = readdir(repertoire)) != NULL)
+		if ((structRepert = readdir(repertoire)) != NULL) {
 
-			cheminAAjouter = "";
+			char* cheminAAjouter = malloc(sizeof(char) * PATH_MAX);
+
 			/*
 			Chemin vers fichier/répertoire
 			*/
@@ -215,7 +215,7 @@ static int creerZip(const char* cheminFichier, struct zip *fichierZip) {
 
 			printf("cheminAAjouter: %s\n",cheminAAjouter);
 
-			if (strcmp(dname, ".")  == 0 || strcmp(dname, ".."))
+			if (strcmp(dname, ".")  == 0 || strcmp(dname, "..") == 0)
 				continue;
 
 			/*
@@ -232,11 +232,14 @@ static int creerZip(const char* cheminFichier, struct zip *fichierZip) {
 				zip_file_add(fichierZip, dname, source, ZIP_FL_ENC_UTF_8);
 				free(data);
 			}
-			else
+			else {
 				/*
-				Ajout du répertoire en entier
+				Ajout du répertoire dans le zip, et tout ce qui l'accompagne
 				*/
 				zip_dir_add(fichierZip, dname, ZIP_FL_ENC_UTF_8);
+				ajouterDansZip(cheminAAjouter, fichierZip);
+			}
+		}
 	}
 	while (structRepert != NULL);
 
@@ -291,8 +294,12 @@ static int verificationZip(char* cheminFichier) {
 	char* constCheminFichier = malloc(sizeof(char) * tailleFichier(cheminFichier));
 
 	strcpy(constCheminFichier, cheminFichier);
+	constCheminFichier = strcat(constCheminFichier, ".zip");
 
-	fichierZip = zip_open(cheminFichier, ZIP_CREATE, &err);
+	/*
+	On ne crée pas l'archive si et seulement si elle existe
+	*/
+	fichierZip = zip_open(constCheminFichier, ZIP_EXCL|ZIP_CREATE, &err);
 
 	printf("Vérification concernant la compression Zip...\n");
 
@@ -309,11 +316,23 @@ static int verificationZip(char* cheminFichier) {
 			printf("ERREUR: Chemin non-existant - verificationZip()\n");
 			exit(EXIT_FAILURE);
 		};
-	}
-	else {
-		creerZip(constCheminFichier, fichierZip);
-	}
 
+		if (err == ZIP_ER_EXISTS) {
+			printf("Archive existante\n");
+			return 0;
+		};
+
+		printf("ERREUR: Ouverture du fichier impossible...\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	printf("CréerZip()\n");
+	if (ajouterDansZip(cheminFichier, fichierZip) == 0)
+		zip_close(fichierZip);
+	else {
+		exit(EXIT_FAILURE);
+	}
+	
 	return 0;
 
 }
@@ -333,7 +352,7 @@ static int demandeChemin(char *cheminFichier) {
 
 	home = strcat(home, "/");
 
-	printf("Entrez le chemin du fichier/dossier à transférer sur PROF:\n");
+	printf("Entrez le chemin du fichier/dossier à transférer sur PROF (sans .zip):\n");
 	printf("%s",home);
 	fgets(cheminEntre, PATH_MAX, stdin);
 	supprimeCaractere(cheminEntre, '\n');
