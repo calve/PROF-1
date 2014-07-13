@@ -355,21 +355,43 @@ int main() {
 
 	printf("Début de connexion avec PROF...");
 
-	char* charLogin = malloc(sizeof(char) * 50);
-
-	charLogin = strcat("login=",charLogin);
+	char* charLogin = malloc(sizeof(char) * 48);
+	strcpy(charLogin, "login=");
 	charLogin = strcat(charLogin, identifiantFIL);
-	charLogin = strcat(charLogin, "&password=");
+	charLogin = strcat(charLogin, "&passwd=");
 	charLogin = strcat(charLogin, motDePasseFIL);
 
 	curl_easy_setopt(curl, CURLOPT_URL, URL_PROF);
 	curl_easy_setopt(curl, CURLOPT_VERBOSE, DEBUG);
-
-	printf(" Ok\n");
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+	curl_easy_setopt(curl, CURLOPT_POST, 1);
+	/*
+	On accepte les redirections
+	*/
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt(curl, CURLOPT_POSTREDIR, 3);
+	/*
+	Données POST
+	*/
+	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, charLogin);
+	/*
+	Cookies
+    */
+	curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
 
 	/*
-	Connexion perdue -> On redemande la combinaison ID + MDP
+	Envoie des données
 	*/
+	res = curl_easy_perform(curl);
+
+	if(CURLE_OK != res)
+    {
+    	printf(" ERREUR\n");
+        printf("ERREUR: %s\n", strerror(res));
+        exit(EXIT_FAILURE);
+    }
+
+	printf(" OK\n");
 	
 	/*
 	Demande de la matière
