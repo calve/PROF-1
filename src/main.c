@@ -323,6 +323,7 @@ int main() {
 	char motDePasseFIL[LONGUEUR_MDP];
 	char cheminFichier[PATH_MAX] = "~/";
 	CURL *curl;
+	CURLcode res;
 	
 	printf("Bienvenue sur Prof!\n");
 	
@@ -331,6 +332,8 @@ int main() {
 	demandeMDP(motDePasseFIL);
 
 	demandeChemin(cheminFichier);
+
+	curl_global_init(CURL_GLOBAL_ALL);
 
 	/*
 	Connection sur PROF (prof.fil.univ-lille1.fr) avec ID + MDP
@@ -351,6 +354,13 @@ int main() {
 	*/
 
 	printf("Début de connexion avec PROF...");
+
+	char* charLogin = malloc(sizeof(char) * 50);
+
+	charLogin = strcat("login=",charLogin);
+	charLogin = strcat(charLogin, identifiantFIL);
+	charLogin = strcat(charLogin, "&password=");
+	charLogin = strcat(charLogin, motDePasseFIL);
 
 	curl_easy_setopt(curl, CURLOPT_URL, URL_PROF);
 	curl_easy_setopt(curl, CURLOPT_VERBOSE, DEBUG);
@@ -375,7 +385,7 @@ int main() {
 	
 	printf("Fin de connexion avec PROF...");
 
-	curl_easy_cleanup(curl);
+	curl_global_cleanup();
 
 	printf(" Ok\n");
 
