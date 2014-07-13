@@ -147,7 +147,7 @@ static long tailleFichier(char* cheminFichier) {
 }
 
 /**
- * \fn static int ajouterDansZip(char* cheminFichier, struct zip *fichierZip)
+ * \fn static int ajouterDansZip(const char* cheminFichier, struct zip *fichierZip)
  * \brief Fonction permettant d'ajouter un fichier/répertoire, dans un zip
  *
  * \param cheminFichier Le chemin du fichier/répertoire à ajouter
