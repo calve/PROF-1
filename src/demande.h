@@ -1,3 +1,10 @@
+/**
+ * \file demande.h
+ * \brief Prototype du module 'demande'
+ * \author Carette Antonin
+ * \version 0.1
+ */
+
 #ifndef DEMANDE
 #define DEMANDE
 

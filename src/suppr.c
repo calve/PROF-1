@@ -1,3 +1,10 @@
+/**
+ * \file suppr.c
+ * \brief Module de suppression de caractères et de fin de chaîne de caractères
+ * \author Carette Antonin
+ * \version 0.1
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

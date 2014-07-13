@@ -1,3 +1,10 @@
+/**
+ * \file demande.c
+ * \brief Module de demande de login/mot-de-passe
+ * \author Carette Antonin
+ * \version 0.1
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
