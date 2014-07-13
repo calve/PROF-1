@@ -30,7 +30,7 @@ Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxy
 	*	vérification fichier déjà zippé: OK
 	*	zip automatique des fichiers du dossier: OK
 	*	renommage du fichier zippé selon login: ?
-	*	connexion avec PROF: ?
+	*	connexion avec PROF: OK
 	*	dépot du fichier zippé: ?
 	*	vérification de la bonne conformité du rendu: ?
 2.	Arriver à contacter la plateforme
