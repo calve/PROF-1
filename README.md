@@ -23,6 +23,16 @@ Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxy
 ####TODO:
 
 1.	Implémenter un main fonctionnel
+	*	demande du login: OK
+	*	demande du MDP: OK
+	*	demande du chemin: OK
+	*	vérification fichier/dossier: OK
+	*	vérification fichier déjà zippé: OK
+	*	zip automatique des fichiers du dossier: OK
+	*	renommage du fichier zippé selon login: ?
+	*	connexion avec PROF: ?
+	*	dépot du fichier zippé: ?
+	*	vérification de la bonne conformité du rendu: ?
 2.	Arriver à contacter la plateforme
 3.	Synchronisation automatique des TP (avec horlogerie)
 
