@@ -36,7 +36,7 @@
  * \def URL
  * \brief Macro contenant l'URL de la plateforme PROF
  */
-#define URL_PROF "https://prof.fil.univ-lille1.fr"
+#define URL_PROF "https://prof.fil.univ-lille1.fr/login.php"
 
 /**
  * \def DEBUG
