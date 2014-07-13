@@ -375,7 +375,7 @@ int main() {
 	*/
 	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, charLogin);
 	/*
-	Cookies
+	Ajout/Suivi de cookies
     */
 	curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
 
@@ -394,15 +394,19 @@ int main() {
 	printf(" OK\n");
 	
 	/*
-	Demande de la matière
+	Récupération de la page HTML dans un fichier - Parse + récupération de la liste des matières - affichage
 	*/
-	
+
 	/*
-	Si chemin vers dossier, on zip le tout, on renomme et on envoie; sinon, on envoie
+	Demande de la matière
 	*/
 
 	/*
 	Envoi!
+	*/
+
+	/*
+	On termine
 	*/
 	
 	printf("Fin de connexion avec PROF...");
