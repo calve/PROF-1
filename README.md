@@ -18,7 +18,7 @@ Utilisation de la librairie _libzip_ (voir [site internet](http://www.nih.at/lib
 
 ####Utilisation de doxygen:
 
-Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxyfile_config afin de mettre le chemin d'accès vers le répertoire doc/ du projet, pour votre machine (remplacer /PATH_TO_DOC_FOLDER)
+Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxyfile_config afin de mettre le chemin d'accès vers le répertoire doc/ du projet, pour votre machine (remplacer /PATH_TO_DOC_FOLDER, et /PATH_TO_PROF_FOLDER)
 
 ####TODO:
 
