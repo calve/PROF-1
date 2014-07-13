@@ -18,8 +18,8 @@ Utilisation de la librairie _libzip_ (voir [site internet](http://www.nih.at/lib
 
 ####TODO:
 
-1.	Contact la plateforme PROF
-2.	Implémenter un main totalement fonctionnel
+1.	Implémenter un main fonctionnel
+2.	Arriver à contacter la plateforme
 3.	Synchronisation automatique des TP (avec horlogerie)
 
 ####Un soucis?
