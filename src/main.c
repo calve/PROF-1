@@ -132,12 +132,11 @@ static void demandeMDP(char* mdpFIL) {
  */ 
 static long tailleFichier(char* cheminFichier) {
 
-	FILE *fichier;
-    long size;
+    long size = 0;
  
-    fichier=fopen(cheminFichier,"rb");
+    FILE *fichier=fopen(cheminFichier,"rb");
  
-    if(fichier)
+    if(fichier != NULL)
     {
             fseek (fichier, 0, SEEK_END);
             size=ftell (fichier);
