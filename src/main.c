@@ -272,19 +272,25 @@ static int verificationChemin(char* cheminFichier) {
  */
 static int estArchiveZip(char* cheminFichierDonne) {
 
+	/*Pas de vérification de la bonne structure du fichier zip*/
+
 	int err = 0;
 	struct zip *fichierZip = NULL;
 
 	/*
 	Vérification de l'archive zip -> si oui, on stoppe - sinon, on crée l'archive
 	*/
+	
 	fichierZip = zip_open(cheminFichierDonne, ZIP_EXCL, &err);
 
 	if (fichierZip == NULL) {
 
 		if (err == ZIP_ER_EXISTS) {
-			printf("Le fichier entré, donné par %s est une archive ZIP... Pas de compression prévue\n", cheminFichierDonne);
-			return 1;
+			if (opendir(cheminFichierDonne) == ENOTDIR) {
+				
+				printf("Le fichier entré, donné par %s est une archive ZIP... Pas de compression prévue\n", cheminFichierDonne);
+				return 1;
+			}
 		}
 	}
 
