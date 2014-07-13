@@ -28,4 +28,4 @@ cleanobj:
 	rm *.o
 
 cleanprg:
-	rm prof
+	rm $(PROF)
