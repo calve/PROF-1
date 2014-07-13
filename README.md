@@ -16,6 +16,10 @@ Utilisation de l'interface _libcurl_ (voir [site internet](http://curl.haxx.se/l
 
 Utilisation de la librairie _libzip_ (voir [site internet](http://www.nih.at/libzip/) pour la documentation et l'installation).
 
+####Utilisation de doxygen:
+
+Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxyfile_config afin de mettre le chemin d'accès vers le répertoire doc/ du projet, pour votre machine (remplacer /PATH_TO_DOC_FOLDER)
+
 ####TODO:
 
 1.	Implémenter un main fonctionnel
