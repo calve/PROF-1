@@ -280,7 +280,7 @@ static int estArchiveZip(char* cheminFichierDonne) {
 
 	if (ext != NULL)
 		if (strcmp(ext, ".zip") == 0) {
-			printf("Le fichier donné en entré est une archive Zip... Pas de compression prévue!\n");
+			printf("Le fichier donné en entrée est une archive Zip... Pas de compression prévue!\n");
 			return 1;
 		}
 
