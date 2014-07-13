@@ -17,7 +17,7 @@ endif
 
 main: $(MAIN)
 ifeq ($(DEMDEBUG),yes)
-	$(CC) -DNDEBUG $(OPTIONS) $(MAIN) $(ZLIBLINK) $(CURLLINK) -o $(PROF)
+	$(CC) -DNDEBUG $(OPTIONS) $(MAIN) $(ZLIBLINK) $(CURLLINK) -v -o $(PROF)
 else
 	$(CC) $(OPTIONS) $(MAIN) $(CURLLINK) -o prof
 endif
