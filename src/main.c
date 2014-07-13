@@ -17,6 +17,9 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+#include "demande.h"
+#include "suppr.h"
+
 /**
  * \def FALSE
  * \brief Macro permettant d'associer le bit 0 à FALSE
@@ -28,18 +31,6 @@
  * \brief Macro permettant d'associer le bit 1 à TRUE
  */
 #define TRUE 1
-
-/** 
-  * \def LONGUEUR_ID
-  * \brief Macro concernant la longueur maximale d'un identifiant étudiant - ici: 20 caractères
-  */
-#define LONGUEUR_ID 20
-
-/**
- * \def LONGUEUR_MDP
- * \brief Macro concernant la longueur maximale d'un mot-de-passe étudiant - ici: 15 caractères
- */
-#define LONGUEUR_MDP 15
 
 /**
  * \def URL
@@ -58,70 +49,6 @@
 #endif
 
  struct zip;
-
-/**
- * \fn static void supprimerSuite(char caractereRecherche)
- * \brief Fonction permettant de contourner le problème du buffer vide / trop plein
- *
- * \param caractereRecherche Le caractère recherché (le même que la fonction supprimeCaractere si utilisation)
- */
-static void supprimerSuite(char caractereRecherche) {
-
-	int caractere;
-
-	while ((caractere = getchar()) != caractereRecherche && caractere != EOF) 
-		{}
-
-}
-
-/**
- * \fn static void supprimeCaractere(char* ligne, char caractere)
- * \brief Fonction permettant de rechercher un caractère dans une chaîne de caractères, et de supprimer ce qui suit celui-ci
- *
- * \param ligne La chaîne de caractères dans laquelle on voudra rechercher le caractère
- * \param caractere Le caractère que l'on voudra rechercher dans la chaîne de caractères
- */
-static void supprimeCaractere(char* ligne, char caractere) {
-
-	/*
-	On recherche après le caractère donné en paramètre, dans la chaîne de caractères
-	*/
-	char *saut = strchr(ligne, caractere);
-
-	if (saut)
-		*saut = 0;
-	else
-		supprimerSuite(caractere);
-
-}
-
-/**
- * \fn static void demandeLogin(char* idFIL)
- * \brief Fonction permettant de demander le login de l'utilisateur
- *
- * \param idFIL Une chaîne de caractères (20 caractères), destinée à recevoir le login de l'utilisateur
- */
-static void demandeLogin(char* idFIL) {
-	
-	printf("Entrez votre identifiant FIL:");
-	fgets(idFIL, LONGUEUR_ID, stdin);
-	supprimeCaractere(idFIL, '\n');
-
-}
-
-/**
- * \fn static void demandeMDP(char* mdpFIL)
- * \brief Fonction permettant de demander le mot-de-passe associé au login de l'utilisateur
- *
- * \param mdpFIL Une chaîne de caractères (15 caractères), destinée à recevoir le mot-de-passe de l'utilisateur
- */
-static void demandeMDP(char* mdpFIL) {
-
-	printf("Entrez votre mot de passe FIL:");
-	fgets(mdpFIL, LONGUEUR_MDP, stdin);
-	supprimeCaractere(mdpFIL, '\n');
-
-}
 
 /**
  * \fn static long tailleFichier(char* cheminFichier)
@@ -343,9 +270,8 @@ static int verificationZip(char* cheminFichier) {
 	printf("CréerZip()\n");
 	if (ajouterDansZip(cheminFichier, fichierZip) == 0)
 		zip_close(fichierZip);
-	else {
+	else
 		exit(EXIT_FAILURE);
-	}
 	
 	return 0;
 
@@ -366,7 +292,7 @@ static int demandeChemin(char *cheminFichier) {
 
 	home = strcat(home, "/");
 
-	printf("Entrez le chemin du fichier/dossier à transférer sur PROF (sans .zip):\n");
+	printf("Entrez le chemin du fichier/dossier à transférer sur PROF:\n");
 	printf("%s",home);
 	fgets(cheminEntre, PATH_MAX, stdin);
 	supprimeCaractere(cheminEntre, '\n');
@@ -424,8 +350,12 @@ int main() {
 	Connexion OK
 	*/
 
+	printf("Début de connexion avec PROF...");
+
 	curl_easy_setopt(curl, CURLOPT_URL, URL_PROF);
 	curl_easy_setopt(curl, CURLOPT_VERBOSE, DEBUG);
+
+	printf(" Ok\n");
 
 	/*
 	Connexion perdue -> On redemande la combinaison ID + MDP
@@ -443,7 +373,11 @@ int main() {
 	Envoi!
 	*/
 	
+	printf("Fin de connexion avec PROF...");
+
 	curl_easy_cleanup(curl);
+
+	printf(" Ok\n");
 
 	exit(EXIT_SUCCESS);
 
