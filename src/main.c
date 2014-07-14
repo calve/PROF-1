@@ -404,16 +404,35 @@ int main() {
 	printf(" OK\n");
 
 	/*
+	Tableau de 20 options max, chaque option faisant 100 caractères max
+	*/
+	char **tabOptions = (char**) malloc(sizeof(char*) * 20);
+
+	unsigned int i = 0;
+
+	/*
+	Chaque entrée est de 100 caractères
+	*/
+	for (i = 0; i < 20; i++)
+		tabOptions[i] = (char*) malloc(sizeof(char) * 100);
+
+	/*
 	Récupération de la page HTML dans un fichier - Parse + récupération de la liste des matières - affichage
 	*/
 
-	char** optionsPROF = parseFichierHTML(str.ptr);
+	if (parseFichierHTML(str.ptr, tabOptions) != 0) {
+		printf("ERREUR: Erreur lors du parsing HTML\n");
+		exit(EXIT_FAILURE);
+	}
 
 	/*
 	Si pas d'options (matière) -> rien à rendre!
 	*/
-	if (strlen(*optionsPROF)==0) {
+	if (strlen(*tabOptions)==0) {
 		printf("Pas de matières à choisir -> pas de TP à rendre...Chanceux!\n");
+		for (i = 0; i < 20; i++) 
+			free(tabOptions[i]);
+		free(tabOptions);
 		return 0;
 	};
 
@@ -421,13 +440,11 @@ int main() {
 	Impression des options concernant les matières
 	*/
 
-	unsigned long i = 0;
-
 	/*printf("Faites votre choix: \n");*/
 
-	for (i = 0; i < strlen(*optionsPROF); i++) {
+	for (i = 0; i < strlen(*tabOptions); i++) {
 
-		printf("\t -> Option [%lu]: %s\n", i, optionsPROF[i]);
+		printf("\t -> Option [%d]: %s\n", i, tabOptions[i]);
 
 	}
 
