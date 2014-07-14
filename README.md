@@ -35,11 +35,21 @@ Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxy
 	*	vérification de la bonne conformité du rendu: ?
 2.	Synchronisation automatique des TP (avec horlogerie)
 
+####Utilisation
+
+	*	Se placer dans le répertoire PROF/
+	*	Compilation: **make**
+	*	Exécution: **./bin/prof**
+	*	Nettoyage: **make cleanall**
+
 ####Un soucis?
 
 1.	Assurez-vous d'avoir tous les outils nécessaires pour compiler le projet (gcc),
-2.	Assurez-vous d'avoir bien installé libcurl (voir site internet plus haut),
-3.	Assurez-vous de bien avoir, dans /usr/lib le binaire libzip.so.2.1.0. 
+2.	Assurez-vous d'avoir bien installé libcurl (voir site internet plus haut) - si problème d'inclusion pour <zipconf.h>:
+	*	Se placer dans le répertoire libzip téléchargé
+	*	**su** ou **sudo su**
+	*	**cp /REPERTOIRE_LIBZIP/lib/zipconf.h /usr/local/includes**
+3.	Assurez-vous de bien avoir, dans /usr/lib le binaire libzip.so.2.1.0
 	Si vous détenez libzip.so.x:
 	*	**su** ou **sudo su**
 	*	**cp /usr/local/lib/libzip/libzip.so.2.1.0 /usr/lib**
