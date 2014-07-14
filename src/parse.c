@@ -23,21 +23,16 @@
 #define EOPTION "</option>"
 
 /**
- * \fn char** parseFichierHTML(char* str)
+ * \fn int parseFichierHTML(char* str)
  * \brief Fonction permettant de parser une longue chaîne de caractères (page PHP sauvée), afin de trouver les options de matières de TD/TP
  *
  * \param str Une chaîne valant la page PHP de sélection de projets
- * \return Un tableau contenant les titres des options de projets
+ * \return Un entier: 0 si la fonction s'est bien exécuté - 1 si la balise EOPTION n'a pas été trouvé...
  */
-char** parseFichierHTML(char* str) {
+int parseFichierHTML(char* str, char** tabOptions) {
 
 	int positionEOption = 0;
 	int i = 0;
-
-	/*
-	Tableau de 20 options max, chaque option faisant 100 caractères max
-	*/
-	char tabOptions[20][100];
 
 	/*Tableau de caractères valant l'option*/
 	char* option = malloc(sizeof(char) * 100);
@@ -86,7 +81,7 @@ char** parseFichierHTML(char* str) {
 		*/
 		else {
 			free(finOption);
-			break;
+			return 1;
 		}
 
 	}
@@ -95,9 +90,6 @@ char** parseFichierHTML(char* str) {
 
 	printf("SORTIE\n");
 
-	/*
-	Retour du tableau d'options
-	*/
-	return tabOptions;
+	return 0;
 
 }
