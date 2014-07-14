@@ -25,21 +25,20 @@ Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxy
 1.	Implémenter un main fonctionnel
 	*	demande du login: OK
 	*	demande du MDP: OK
-	*	demande du chemin: OK
+	*	demande du chemin au fichier/dossier: OK
 	*	vérification fichier/dossier: OK
-	*	vérification fichier déjà zippé: OK
-	*	zip automatique des fichiers du dossier: OK
-	*	renommage du fichier zippé selon login: ?
+	*	si fichier, vérification déjà zippé: OK
+	*	zip automatique du fichier/dossier si non-zippé: OK
 	*	connexion avec PROF: OK
+	*	renommage du fichier zippé selon login + matière: ?
 	*	dépot du fichier zippé: ?
 	*	vérification de la bonne conformité du rendu: ?
-2.	Arriver à contacter la plateforme
-3.	Synchronisation automatique des TP (avec horlogerie)
+2.	Synchronisation automatique des TP (avec horlogerie)
 
 ####Un soucis?
 
 1.	Assurez-vous d'avoir tous les outils nécessaires pour compiler le projet (gcc),
-2.	Assurez-vous d'avoir bien installé libcurl (voir site interet plus haut),
+2.	Assurez-vous d'avoir bien installé libcurl (voir site internet plus haut),
 3.	Assurez-vous de bien avoir, dans /usr/lib le binaire libzip.so.2.1.0. Si vous détenez libzip.so.x -> super-utilisateur -> cp /usr/local/lib/libzip/libzip.so.2.1.0 /usr/lib && mv /usr/lib/libzip.so.2 /usr/lib/libzip.so.2_old && mv /usr/lib/libzip.so.2.1.0 /usr/lib/libzip.so.2
 4.	Merci de m'envoyer un e-mail (voir ci-dessous) si les trois options présentées ci-dessus ne fonctionnent pas.
 
