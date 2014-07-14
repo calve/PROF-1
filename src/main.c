@@ -48,7 +48,37 @@
 #define DEBUG 0
 #endif
 
- struct zip;
+struct string {
+  char *ptr;
+  size_t len;
+};
+
+struct zip;
+
+void initStructString(struct string *s) {
+  s->len = 0;
+  s->ptr = malloc(s->len+1);
+  if (s->ptr == NULL) {
+    printf("ERREUR: malloc!\n");
+    exit(EXIT_FAILURE);
+  }
+  s->ptr[0] = '\0';
+}
+
+static size_t writeFonction(void *ptr, size_t size, size_t nmemb, struct string *s)
+{
+  size_t new_len = s->len + size*nmemb;
+  s->ptr = realloc(s->ptr, new_len+1);
+  if (s->ptr == NULL) {
+    printf("ERREUR: realloc!\n");
+    exit(EXIT_FAILURE);
+  }
+  memcpy(s->ptr+s->len, ptr, size*nmemb);
+  s->ptr[new_len] = '\0';
+  s->len = new_len;
+
+  return size*nmemb;
+}
 
 /**
  * \fn static long tailleFichier(char* cheminFichier)
@@ -361,6 +391,9 @@ int main() {
 	charLogin = strcat(charLogin, "&passwd=");
 	charLogin = strcat(charLogin, motDePasseFIL);
 
+	struct string str;
+   	initStructString(&str);
+
 	curl_easy_setopt(curl, CURLOPT_URL, URL_PROF);
 	curl_easy_setopt(curl, CURLOPT_VERBOSE, DEBUG);
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -378,7 +411,11 @@ int main() {
 	Ajout/Suivi de cookies
     */
 	curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
-
+	/*
+	Enregistrement de la page Web
+	*/
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFonction);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
 	/*
 	Envoie des données
 	*/
