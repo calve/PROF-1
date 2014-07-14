@@ -39,8 +39,6 @@ int parseFichierHTML(char* str, char** tabOptions) {
 
 	strcpy(option, str);
 
-	printf("OK\n");
-
 	/*
 	Tant qu'il y a des options...
 	*/
@@ -87,8 +85,6 @@ int parseFichierHTML(char* str, char** tabOptions) {
 	}
 
 	free(option);
-
-	printf("SORTIE\n");
 
 	return 0;
 
