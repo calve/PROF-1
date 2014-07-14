@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <pwd.h>
+#include <readline/readline.h>
 #include <sys/types.h>
 #include <dirent.h>
 
@@ -286,16 +287,44 @@ static int verificationZip(char* cheminFichier) {
  */
 static int demandeChemin(char *cheminFichier) {
 
-	char* cheminEntre = malloc(sizeof(char) * PATH_MAX);
 	char* home = getcwd(cheminFichier, PATH_MAX);
+        char* resolved_path = malloc(sizeof(char) * PATH_MAX);
 
 	home = strcat(home, "/");
 
 	printf("Entrez le chemin du fichier/dossier à transférer sur PROF:\n");
-	printf("%s",home);
-	fgets(cheminEntre, PATH_MAX, stdin);
-	supprimeCaractere(cheminEntre, '\n');
-	cheminFichier = strcat(home, cheminEntre);
+        cheminFichier = readline(home);
+        cheminFichier = strcat(home, cheminFichier);
+        printf("cheminFichier : %s\n",cheminFichier);
+        printf("resolved_path : %s\n",resolved_path);
+        printf("realpath(cheminFichier, resolved_path);\n");
+        if ( realpath(cheminFichier, resolved_path) == NULL ){
+          printf("real path failed, errno %d \n", errno);
+          if (errno == EACCES)
+            printf("EACCES");
+          if ( errno == EINVAL)
+            printf("EINVAL");
+          if (errno == EIO)
+            printf("EIO");
+          if (errno == ELOOP)
+            printf("ELOOP");
+          if (errno == ENOTDIR)
+            printf("ENOTDIR");
+          if (errno == ENOENT)
+            {
+              printf("ENOENT");
+              if (access(resolved_path, F_OK) == 0)
+                printf(" ... access ok\n");
+            }
+
+          if (errno == ENAMETOOLONG)
+            printf("ENAMETOOLONG");
+          printf("\n");
+        }
+        printf("cheminFichier : %s\n",cheminFichier);
+        printf("resolved_path : %s\n",resolved_path);
+        printf("cheminFichier = resolved_path;\n");
+        cheminFichier = resolved_path;
 
 	/*
 	Vérification chemin + zip
@@ -320,7 +349,7 @@ int main() {
 
 	char identifiantFIL[LONGUEUR_ID];
 	char motDePasseFIL[LONGUEUR_MDP];
-	char cheminFichier[PATH_MAX] = "~/";
+	char cheminFichier[PATH_MAX];
 	CURL *curl;
 	CURLcode res;
 	

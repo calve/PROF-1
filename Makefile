@@ -9,6 +9,7 @@ PROF=bin/prof
 OPTIONS=-Wall -W
 CURLLINK=-lcurl
 ZLIBLINK=-lzip
+READLINELINK=-lreadline
 OBJECTS=src/*.o
 
 ifeq ($(DEMDEBUG),yes)
@@ -28,7 +29,7 @@ suppr: $(SUPPR)
 
 main: $(MAIN)
 ifeq ($(DEMDEBUG),yes)
-	$(CC) -DNDEBUG $(OPTIONS) $(DEMANDEO) $(SUPPRO) $(MAIN) $(ZLIBLINK) $(CURLLINK) -v -o $(PROF)
+	$(CC) -DNDEBUG $(OPTIONS) $(DEMANDEO) $(SUPPRO) $(MAIN) $(ZLIBLINK) $(CURLLINK) $(READLINELINK) -v -o $(PROF)
 else
 	$(CC) $(OPTIONS) $(DEMANDEO) $(SUPPRO) $(MAIN) $(ZLIBLINK) $(CURLLINK) -o $(PROF)
 endif
