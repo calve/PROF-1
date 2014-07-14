@@ -287,8 +287,7 @@ static int verificationZip(char* cheminFichier) {
 static int demandeChemin(char *cheminFichier) {
 
 	char* cheminEntre = malloc(sizeof(char) * PATH_MAX);
-	struct passwd* passwdEnt = getpwuid(getuid());
-	char* home = passwdEnt->pw_dir;
+	char* home = getcwd(cheminFichier, PATH_MAX);
 
 	home = strcat(home, "/");
 
