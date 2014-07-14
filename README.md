@@ -30,8 +30,9 @@ Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxy
 	*	si fichier, vérification déjà zippé: OK
 	*	zip automatique du fichier/dossier si non-zippé: OK
 	*	connexion avec PROF: OK
+	*	parser options/rendus des options: EN COURS
 	*	renommage du fichier zippé selon login + matière: ?
-	*	dépot du fichier zippé: ?
+	*	dépot du fichier zippé: EN COURS
 	*	vérification de la bonne conformité du rendu: ?
 2.	Synchronisation automatique des TP (avec horlogerie)
 
