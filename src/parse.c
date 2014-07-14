@@ -10,6 +10,19 @@
 #include <string.h>
 
 /**
+ * \def OOPTION
+ * \brief Macro contenant la balise HTML de début d'option - on considère ici le début de déclaration d'une matière
+ */
+#define OOPTION "<option>"
+
+
+/**
+ * \def EOPTION
+ * \brief Macro contenant la balise HTML de fin d'option - on considère ici la fin de déclaration d'une matière
+ */
+#define EOPTION "</option>"
+
+/**
  * \fn char** parseFichierHTML(char* str)
  * \brief Fonction permettant de parser une longue chaîne de caractères (page PHP sauvée), afin de trouver les options de matières de TD/TP
  *
@@ -29,9 +42,6 @@ char** parseFichierHTML(char* str) {
 	/*Tableau de caractères valant l'option*/
 	char* option = malloc(sizeof(char) * 100);
 
-	char* ooption = "<option>";
-	char* eoption = "</option>";
-
 	strcpy(option, str);
 
 	printf("OK\n");
@@ -39,19 +49,19 @@ char** parseFichierHTML(char* str) {
 	/*
 	Tant qu'il y a des options...
 	*/
-	while ((str = strstr(str, ooption)) != NULL) {
+	while ((str = strstr(str, OOPTION)) != NULL) {
 
 		/*
 		Décalage de la longueur de OPTION
 		*/
-		str = str + strlen(ooption);
+		str = str + strlen(OOPTION);
 
 		char* finOption = malloc(sizeof(char) * strlen(str));
 
 		/*
 		On recherche après la fin de la balise
 		*/
-		if ((finOption = strstr(str, eoption)) != NULL) {
+		if ((finOption = strstr(str, EOPTION)) != NULL) {
 
 			/*
 			Longueur de l'option
