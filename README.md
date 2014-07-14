@@ -37,10 +37,10 @@ Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxy
 
 ####Utilisation
 
-	*	Se placer dans le répertoire PROF/
-	*	Compilation: **make**
-	*	Exécution: **./bin/prof**
-	*	Nettoyage: **make cleanall**
+*	Se placer dans le répertoire PROF/
+*	Compilation: **make**
+*	Exécution: **./bin/prof**
+*	Nettoyage: **make cleanall**
 
 ####Un soucis?
 
