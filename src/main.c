@@ -20,6 +20,7 @@
 #include "demande.h"
 #include "suppr.h"
 #include "structStr.h"
+#include "parse.h"
 
 /**
  * \def FALSE
@@ -401,17 +402,34 @@ int main() {
     }
 
 	printf(" OK\n");
-	
+
 	/*
 	Récupération de la page HTML dans un fichier - Parse + récupération de la liste des matières - affichage
 	*/
-	/*char** optionsPROF = parseFichierHTML(str);*/
+
+	char** optionsPROF = parseFichierHTML(str.ptr);
 
 	/*
-	int choix = fgets("Votre choix?");
-
-	char** RendusOption = parseOption(str, optionsPROF[choix]);
+	Si pas d'options (matière) -> rien à rendre!
 	*/
+	if (strlen(*optionsPROF)==0) {
+		printf("Pas de matières à choisir -> pas de TP à rendre...Chanceux!\n");
+		return 0;
+	};
+
+	/*
+	Impression des options concernant les matières
+	*/
+
+	unsigned long i = 0;
+
+	/*printf("Faites votre choix: \n");*/
+
+	for (i = 0; i < strlen(*optionsPROF); i++) {
+
+		printf("\t -> Option [%lu]: %s\n", i, optionsPROF[i]);
+
+	}
 
 	/*
 	Demande de la matière
