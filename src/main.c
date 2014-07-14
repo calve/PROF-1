@@ -432,7 +432,6 @@ int main() {
 	if (parseFichierHTML(str.ptr, tabOptions) != 0) {
 		for (i = 0; i < 20; i++) {
 			free(tabOptions[i]);
-			printf("%d: OK\n",i);
 		}
 		free(tabOptions);
 		printf("ERREUR: Erreur lors du parsing HTML\n");
