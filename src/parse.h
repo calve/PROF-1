@@ -1,6 +1,6 @@
 #ifndef PARSE
 #define PARSE
 
-char** parseFichierHTML(char*);
+int parseFichierHTML(char*, char**);
 
 #endif
