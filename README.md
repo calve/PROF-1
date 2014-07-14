@@ -28,12 +28,12 @@ Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxy
 	*	demande du chemin au fichier/dossier: OK
 	*	vérification fichier/dossier: OK
 	*	si fichier, vérification déjà zippé: OK
-	*	zip automatique du fichier/dossier si non-zippé: OK - A VERIFIER
+	*	zip automatique du fichier/dossier si non-zippé: OK - **A VERIFIER**
 	*	connexion avec PROF: OK
-	*	parser options/rendus des options: OK - A TESTER
-	*	renommage du fichier zippé selon login + matière: ?
-	*	dépot du fichier zippé: EN COURS
-	*	vérification de la bonne conformité du rendu: ?
+	*	parser options/rendus des options: OK - **A TESTER**
+	*	renommage du fichier zippé selon login + matière: **TODO**
+	*	dépot du fichier zippé: **TODO**
+	*	vérification de la bonne conformité du rendu: **TODO**
 2.	Synchronisation automatique des TP (avec horlogerie)
 
 ####Utilisation
