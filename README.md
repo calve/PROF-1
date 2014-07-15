@@ -47,18 +47,19 @@ Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxy
 
 ####Un soucis?
 
-1.	Assurez-vous d'avoir tous les outils nécessaires pour compiler le projet (gcc),
+1.	Assurez-vous d'avoir tous les outils nécessaires pour compiler le projet (gcc).
 2.	Assurez-vous d'avoir bien installé libcurl (voir site internet plus haut) - si problème d'inclusion pour <zipconf.h>:
 	*	Se placer dans le répertoire libzip téléchargé
 	*	**su** ou **sudo su**
 	*	**cp /REPERTOIRE_LIBZIP/lib/zipconf.h /usr/local/includes**
-3.	Assurez-vous de bien avoir, dans /usr/lib le binaire libzip.so.2.1.0
+3.	Assurez-vous de bien avoir, dans /usr/lib le binaire libzip.so.2.1.0.
 	Si vous détenez libzip.so.x:
 	*	**su** ou **sudo su**
 	*	**cp /usr/local/lib/libzip/libzip.so.2.1.0 /usr/lib**
 	*	**mv /usr/lib/libzip.so.2 /usr/lib/libzip.so.2_old**
 	*	**mv /usr/lib/libzip.so.2.1.0 /usr/lib/libzip.so.2**
-4.	Merci de m'envoyer un e-mail (voir ci-dessous) si les trois options présentées ci-dessus ne fonctionnent pas.
+4.	Assurez-vous de bien avoir installé la librairie libreadline (voir site internet plus haut).
+5.	Merci de m'envoyer un e-mail (voir ci-dessous) si les trois options présentées ci-dessus ne fonctionnent pas.
 
 ####Contact:
 
