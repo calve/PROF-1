@@ -36,10 +36,15 @@
 #define TRUE 1
 
 /**
- * \def URL
- * \brief Macro contenant l'URL de la plateforme PROF
+ * \def URL_PROF
+ * \brief Macro contenant l'URL de la plateforme PROF (page des matières)- login.php
  */
 #define URL_PROF "https://prof.fil.univ-lille1.fr/login.php"
+
+/**
+ * \def URL_MAIN
+ * \brief Macro contenant l'URL de la plateforme PROF (page de rendu pour une matière) - main.php
+ */
 #define URL_MAIN "https://prof.fil.univ-lille1.fr/main.php"
 
 /**
