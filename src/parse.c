@@ -50,6 +50,7 @@
  * \brief Fonction permettant de parser une longue chaîne de caractères (page PHP sauvée), afin de trouver les options de matières de TD/TP
  *
  * \param str Une chaîne valant la page PHP de sélection de projets
+ * \param tabMatieres Un tableau de chaînes de caractères, valant toutes une matière
  * \return Un entier: 0 si la fonction s'est bien exécuté - 1 si la balise EOPTION n'a pas été trouvé...
  */
 int parseFichierHTML(char* str, char** tabOptions) {
