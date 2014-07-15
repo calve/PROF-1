@@ -399,8 +399,6 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-	printf(" OK\n");
-
 	/*
 	Tableau de 20 options max, chaque option faisant 100 caractères max
 	*/
