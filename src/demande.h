@@ -13,5 +13,6 @@
 
 void demandeLogin(char*);
 void demandeMDP(char*);
+char* demandeChemin(char*);
 
 #endif

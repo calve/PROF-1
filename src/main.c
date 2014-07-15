@@ -14,12 +14,15 @@
 #include <errno.h>
 #include <unistd.h>
 #include <pwd.h>
-#include <readline/readline.h>
+
 #include <sys/types.h>
 #include <dirent.h>
+#include <limits.h>
 
 #include "demande.h"
 #include "suppr.h"
+#include "structStr.h"
+#include "parse.h"
 
 /**
  * \def FALSE
@@ -49,7 +52,8 @@
 #define DEBUG 0
 #endif
 
- struct zip;
+struct zip;
+struct string;
 
 /**
  * \fn static long tailleFichier(char* cheminFichier)
@@ -279,53 +283,13 @@ static int verificationZip(char* cheminFichier) {
 }
 
 /**
- * \fn static int demandeChemin(char *cheminFichier)
- * \brief Fonction permettant de demander le chemin du dossier/fichier
+ * \fn static int verificationCheminEtZip(char* cheminFichier)
+ * \brief Fonction permettant de vérifier si le chemin vers le fichier/dossier est accessible, s'il s'agit d'un fichier déjà zippé ou non
  *
- * \param cheminFichier Une chaine de caractères (PATH_MAX max), destinée à recevoir le chemin donné au dossier/fichier
- * \return Retourne un entier: EXIT_SUCCESS si la fonction a bien été exécuté, EXIT_FAILURE si erreur
+ * \param cheminFichier Le chemin menant vers le fichier/dossier devant être rendu
+ * \return Un entier: 0 si la fonction s'est bien exécutée, EXIT_FAILURE sinon
  */
-static int demandeChemin(char *cheminFichier) {
-
-	char* home = getcwd(cheminFichier, PATH_MAX);
-        char* resolved_path = malloc(sizeof(char) * PATH_MAX);
-
-	home = strcat(home, "/");
-
-	printf("Entrez le chemin du fichier/dossier à transférer sur PROF:\n");
-        cheminFichier = readline(home);
-        cheminFichier = strcat(home, cheminFichier);
-        printf("cheminFichier : %s\n",cheminFichier);
-        printf("resolved_path : %s\n",resolved_path);
-        printf("realpath(cheminFichier, resolved_path);\n");
-        if ( realpath(cheminFichier, resolved_path) == NULL ){
-          printf("real path failed, errno %d \n", errno);
-          if (errno == EACCES)
-            printf("EACCES");
-          if ( errno == EINVAL)
-            printf("EINVAL");
-          if (errno == EIO)
-            printf("EIO");
-          if (errno == ELOOP)
-            printf("ELOOP");
-          if (errno == ENOTDIR)
-            printf("ENOTDIR");
-          if (errno == ENOENT)
-            {
-              printf("ENOENT");
-              if (access(resolved_path, F_OK) == 0)
-                printf(" ... access ok\n");
-            }
-
-          if (errno == ENAMETOOLONG)
-            printf("ENAMETOOLONG");
-          printf("\n");
-        }
-        printf("cheminFichier : %s\n",cheminFichier);
-        printf("resolved_path : %s\n",resolved_path);
-        printf("cheminFichier = resolved_path;\n");
-        cheminFichier = resolved_path;
-
+static int verificationCheminEtZip(char* cheminFichier){
 	/*
 	Vérification chemin + zip
 	*/
@@ -359,12 +323,17 @@ int main() {
 
 	demandeMDP(motDePasseFIL);
 
-	demandeChemin(cheminFichier);
+	/*Copie du chemin donné par l'utilisateur*/
+	strcpy(cheminFichier,demandeChemin(cheminFichier));
 
+	/*Vérification de la bonne conformité du chemin, et vérification si déjà zippé/non-zippé (on zip alors)*/
+	verificationCheminEtZip(cheminFichier);
+
+	/*CONNEXION*/
 	curl_global_init(CURL_GLOBAL_ALL);
 
 	/*
-	Connection sur PROF (prof.fil.univ-lille1.fr) avec ID + MDP
+	Connexion sur PROF (prof.fil.univ-lille1.fr) avec ID + MDP
 	*/
 
 	printf("Demande de login...\n");
@@ -389,6 +358,9 @@ int main() {
 	charLogin = strcat(charLogin, "&passwd=");
 	charLogin = strcat(charLogin, motDePasseFIL);
 
+	struct string str;
+   	initStructString(&str);
+
 	curl_easy_setopt(curl, CURLOPT_URL, URL_PROF);
 	curl_easy_setopt(curl, CURLOPT_VERBOSE, DEBUG);
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -406,7 +378,11 @@ int main() {
 	Ajout/Suivi de cookies
     */
 	curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
-
+	/*
+	Enregistrement de la page Web
+	*/
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFonction);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
 	/*
 	Envoie des données
 	*/
@@ -420,10 +396,66 @@ int main() {
     }
 
 	printf(" OK\n");
-	
+
+	/*
+	Tableau de 20 options max, chaque option faisant 100 caractères max
+	*/
+	char **tabOptions = (char**) malloc(sizeof(char*) * 20);
+
+	if (tabOptions == NULL) {
+		printf("ERREUR: Malloc concernant tabOptions\n");
+		exit(EXIT_FAILURE);
+	}
+
+	unsigned int i = 0;
+
+	/*
+	Chaque entrée est de 100 caractères
+	*/
+	for (i = 0; i < 20; i++) {
+		tabOptions[i] = (char*) malloc(sizeof(char) * 100);
+		if (tabOptions[i] == NULL) {
+			printf("ERREUR: Malloc concernant tabOptions[%d]\n",i);
+			exit(EXIT_FAILURE);
+		}
+	}
+
 	/*
 	Récupération de la page HTML dans un fichier - Parse + récupération de la liste des matières - affichage
 	*/
+	if (parseFichierHTML(str.ptr, tabOptions) != 0) {
+		for (i = 0; i < 20; i++) {
+			free(tabOptions[i]);
+		}
+		free(tabOptions);
+		printf("ERREUR: Erreur lors du parsing HTML\n");
+		exit(EXIT_FAILURE);
+	}
+
+	/*
+	Si pas d'options (matière) -> rien à rendre!
+	*/
+	if (strlen(*tabOptions)==0) {
+		for (i = 0; i < 20; i++) {
+			if (tabOptions[i] != NULL)
+				free(tabOptions[i]);
+		}
+		if (tabOptions != NULL)
+			free(tabOptions);
+		printf("Pas de matières à choisir -> pas de TD/TP à rendre...Chanceux!\n");
+		exit(EXIT_SUCCESS);
+	};
+
+	/*
+	Impression des options concernant les matières
+	*/
+	for (i = 0; i < strlen(*tabOptions); i++) {
+
+		printf("\t -> Option [%d]: %s\n", i, tabOptions[i]);
+
+	}
+
+	/*printf("Faites votre choix: \n");*/
 
 	/*
 	Demande de la matière
