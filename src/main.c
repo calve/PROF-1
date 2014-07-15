@@ -49,7 +49,7 @@
 
 /**
  * \def DEBUG
- * \brief Macro permettant d'initialiser d'autres macros, selon le bit attribué au debuggage du programme
+ * \brief Macro permettant d'initialiser d'autres macros, selon le bit attribué au debuggage du programme(0: Disabled)
  */
 #ifdef NDEBUG
 #define DEBUG 1
