@@ -436,7 +436,7 @@ int main() {
 			free(tabMatieres[i]);
 		}
 		free(tabMatieres);
-		printf("ERREUR: Erreur lors du parsing HTML\n");
+		printf("ERREUR: Erreur lors du parsing HTML - Matières\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -498,31 +498,25 @@ int main() {
 
 	curl_easy_reset(curl);
 
+	/*
+	On pointe désormais vers https://www.fil.../main.php
+	*/
 	curl_easy_setopt(curl, CURLOPT_URL, URL_MAIN);
 	curl_easy_setopt(curl, CURLOPT_VERBOSE, DEBUG);
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 	curl_easy_setopt(curl, CURLOPT_POST, 1);
-	/*
-	On accepte les redirections
-	*/
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_easy_setopt(curl, CURLOPT_POSTREDIR, 3);
-	/*
-	Données POST
-	*/
-	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, matiereChoisie);
-	/*
-	Ajout/Suivi de cookies
+    /*
+	On envoie l'identifiant de la matière choisie
     */
 	curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
 	/*
-	Enregistrement de la page Web
+	On récupère de nouveau la page pointée dans str
 	*/
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFonction);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
-	/*
-	Envoie des données
-	*/
+	
 	res = curl_easy_perform(curl);
 
 	if(CURLE_OK != res)
@@ -533,28 +527,23 @@ int main() {
     }
 
 	/*
-	Envoie des données
-	*/
-	res = curl_easy_perform(curl);
-
-	/*
-	On désalloue les variables précédemment initialisées
+	On désalloue les variables précédemment initialisées: tabMatieres, numeroMatiere et matiereChoisie
 	*/
 	free(numeroMatiere);
 	free(matiereChoisie);
 
 	/*
-
-	-> Choix du rendu
+	Choix du rendu
 		-> Si longueur tabRendu == 0 -> Pas de rendu à faire, on quitte
 		-> Sinon, choix du rendu
+	*/
 
 	while ((choixRendu < 0) || (choixRendu >= longueurTabRendu))
 		demandeRendu(&choixRendu);
 	*/
 
 	/*
-	Envoi!
+	Envoi du fichier!
 	*/
 
 	/*
