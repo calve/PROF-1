@@ -13,14 +13,14 @@
  * \def OOPTION
  * \brief Macro contenant la balise HTML de début d'option - on considère ici le début de déclaration d'une matière
  */
-#define OOPTION "<option>"
+#define OOPTION "<OPTION>"
 
 
 /**
  * \def EOPTION
  * \brief Macro contenant la balise HTML de fin d'option - on considère ici la fin de déclaration d'une matière
  */
-#define EOPTION "</option>"
+#define EOPTION "</OPTION>"
 
 /**
  * \fn int parseFichierHTML(char* str)
