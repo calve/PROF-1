@@ -53,7 +53,7 @@
  * \param tabMatieres Un tableau de chaînes de caractères, valant toutes une matière
  * \return Un entier: 0 si la fonction s'est bien exécuté - 1 si la balise EOPTION n'a pas été trouvé...
  */
-int parseFichierHTML(char* str, char** tabOptions) {
+int parseFichierMatiere(char* str, char** tabMatieres) {
 
 	int positionEOption = 0;
 	int i = 0;
