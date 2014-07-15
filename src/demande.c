@@ -12,7 +12,6 @@
 #include <pwd.h>
 #include <limits.h>
 #include <readline/readline.h>
-#include <errno.h>
 #include "suppr.h"
 
 /** 
