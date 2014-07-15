@@ -321,6 +321,7 @@ int main() {
 	char cheminFichier[PATH_MAX];
 	int longueurTab = 0;
 	int choixMatiere = -1;
+	int choixRendu = -1;
 	/*
 	int choixRendu = -1;
 	*/
@@ -510,6 +511,7 @@ int main() {
     /*
 	On envoie l'identifiant de la matière choisie
     */
+	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, matiereChoisie);
 	curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
 	/*
 	On récupère de nouveau la page pointée dans str
@@ -538,9 +540,75 @@ int main() {
 		-> Sinon, choix du rendu
 	*/
 
-	while ((choixRendu < 0) || (choixRendu >= longueurTabRendu))
-		demandeRendu(&choixRendu);
+	/*
+	Tableau de 20 rendus max, chaque option faisant 100 caractères max
 	*/
+	char **tabRendus = (char**) malloc(sizeof(char*) * 20);
+
+	if (tabRendus == NULL) {
+		printf("ERREUR: Malloc concernant tabRendus\n");
+		exit(EXIT_FAILURE);
+	}
+
+	/*
+	Chaque entrée est de 100 caractères
+	*/
+	for (i = 0; i < 20; i++) {
+		tabRendus[i] = (char*) malloc(sizeof(char) * 100);
+		if (tabRendus[i] == NULL) {
+			printf("ERREUR: Malloc concernant tabRendus[%d]\n",i);
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	/*
+	Récupération de la nouvelle page HTML dans un fichier - Parse + récupération de la liste des rendus pour la matière - affichage
+	*/
+	if (parseFichierRendus(str.ptr, tabRendus) != 0) {
+		for (i = 0; i < 20; i++) {
+			free(tabRendus[i]);
+		}
+		free(tabRendus);
+		printf("ERREUR: Erreur lors du parsing HTML - Rendus\n");
+		exit(EXIT_FAILURE);
+	}
+
+	longueurTab = strlen(*tabRendus);
+
+	/*
+	Si pas de rendus -> rien à rendre!
+	*/
+	if (longueurTab==0) {
+		for (i = 0; i < 20; i++) {
+			if (tabRendus[i] != NULL)
+				free(tabRendus[i]);
+		}
+		if (tabRendus != NULL)
+			free(tabRendus);
+		printf("Pas de rendus pour la matière choisie... Chanceux!\n");
+		exit(EXIT_SUCCESS);
+	};
+
+	/*-> Rendus à choisir*/
+
+	printf("\n");
+
+	/*
+	Impression des rendus
+	*/
+	for (i = 1; i <= (longueurTab + 1); i++) {
+
+		if (strlen(tabRendus[i - 1]) != 0)
+			printf("\t -> Rendu [%d]: %s\n", i, tabRendus[i - 1]);
+		else
+			break;
+
+	}
+
+	printf("\n");
+
+	while ((choixRendu <= 0) || (choixRendu > (longueurTab + 1)))
+		demandeRendu(&choixRendu);
 
 	/*
 	Envoi du fichier!
