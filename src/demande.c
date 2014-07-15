@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <pwd.h>
+#include <limits.h>
 #include "suppr.h"
 
 /** 
@@ -48,4 +51,31 @@ void demandeMDP(char* mdpFIL) {
 	fgets(mdpFIL, LONGUEUR_MDP, stdin);
 	supprimeCaractere(mdpFIL, '\n');
 
+}
+
+/**
+ * \fn char* demandeChemin(char *cheminFichier)
+ * \brief Fonction permettant de demander le chemin du dossier/fichier, et de retourner le chemin absolu vers celui-ci
+ *
+ * \param cheminFichier Une chaine de caractères (PATH_MAX max), destinée à recevoir le chemin donné au dossier/fichier
+ * \return Retourne le chemin absolu vers le dossier/fichier voulu
+ */
+char* demandeChemin(char* cheminFichier) {
+
+	char* cheminEntre = malloc(sizeof(char) * PATH_MAX);
+	struct passwd* passwdEnt = getpwuid(getuid());
+	char* home = passwdEnt->pw_dir;
+
+	home = strcat(home, "/");
+
+	printf("Entrez le chemin du fichier/dossier à transférer sur PROF:\n");
+	printf("%s",home);
+	fgets(cheminEntre, PATH_MAX, stdin);
+	supprimeCaractere(cheminEntre, '\n');
+	cheminFichier = strcat(home, cheminEntre);
+	printf("cheminFichier: %s\n",cheminFichier);
+
+	free(cheminEntre);
+
+	return cheminFichier;
 }
