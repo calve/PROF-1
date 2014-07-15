@@ -84,10 +84,20 @@ char* demandeChemin(char* cheminFichier) {
  * \fn void demandeMatiere(int* choixMatiere)
  * \brief Fonction permettant de faire un choix quant à la matière choisie
  *
- * \param choixMatiere Un pointeur vers un entier
+ * \param choixMatiere Un pointeur vers un entier - matière
  */
-void demandeMatiere(int* choixMatiere)
-{
- printf("Faites votre choix: ");
- scanf("%d", choixMatiere);
+void demandeMatiere(int* choixMatiere) {
+	printf("Choisissez la matière, selon le numéro d'option: ");
+	scanf("%d", choixMatiere);
+}
+
+/**
+ * \fn void demandeRendu(int* choixRendu)
+ * \brief Fonction permettant de faire un choix quant au rendu de la matière choisie
+ *
+ * \param choixRendu Un pointeur vers un entier - rendu
+ */
+void demandeRendu(int* choixRendu) {
+	print("Choisissez le rendu, selon le numéro d'option: ");
+	scanf("%d", choixRendu);
 }
