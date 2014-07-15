@@ -121,6 +121,6 @@ void demandeMatiere(int* choixMatiere) {
  * \param choixRendu Un pointeur vers un entier - rendu
  */
 void demandeRendu(int* choixRendu) {
-	print("Choisissez le rendu, selon le numéro d'option: ");
+	printf("Choisissez le rendu, selon le numéro d'option: ");
 	scanf("%d", choixRendu);
 }
