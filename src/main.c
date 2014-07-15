@@ -459,6 +459,8 @@ int main() {
 
 	/*-> Matières à choisir*/
 
+	printf("\n");
+
 	/*
 	Impression des options concernant les matières
 	*/
@@ -496,7 +498,6 @@ int main() {
 	/*
 	Reset - Envoie des données pour arriver sur les sous-options
 	*/
-
 	curl_easy_reset(curl);
 
 	/*
