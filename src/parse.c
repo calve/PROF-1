@@ -90,7 +90,7 @@ int parseFichierMatiere(char* str, char** tabMatieres) {
 			/*
 			Enregistrement
 			*/
-			strcpy(tabOptions[i],option);
+			strcpy(tabMatieres[i],option);
 
 			/*free(finOption);*/
 
