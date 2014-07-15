@@ -60,6 +60,8 @@ int parseFichierHTML(char* str, char** tabOptions) {
 
 			strncpy(option, str, positionEOption);
 
+			option[positionEOption] = '\0';
+
 			/*
 			Enregistrement
 			*/
