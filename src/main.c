@@ -464,8 +464,8 @@ int main() {
 	*/
 	for (i = 1; i <= (longueurTab + 1); i++) {
 
-		if (strlen(tabMatieres[i]) != 0)
-			printf("\t -> Matière [%d]: %s\n", i, tabMatieres[i]);
+		if (strlen(tabMatieres[i - 1]) != 0)
+			printf("\t -> Matière [%d]: %s\n", i, tabMatieres[i - 1]);
 		else
 			break;
 
@@ -531,6 +531,12 @@ int main() {
 	/*
 	On désalloue les variables précédemment initialisées: tabMatieres, numeroMatiere et matiereChoisie
 	*/
+	for (i = 0; i < 20; i++) {
+			if (tabMatieres[i] != NULL)
+				free(tabMatieres[i]);
+		}
+		if (tabMatieres != NULL)
+			free(tabMatieres);
 	free(numeroMatiere);
 	free(matiereChoisie);
 
