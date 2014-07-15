@@ -13,8 +13,7 @@
  * \def OOPTION
  * \brief Macro contenant la balise HTML de début d'option - on considère ici le début de déclaration d'une matière
  */
-#define OOPTION "<OPTION>"
-
+#define OOPTION "<OPTION\nVALUE="
 
 /**
  * \def EOPTION
@@ -37,8 +36,6 @@ int parseFichierHTML(char* str, char** tabOptions) {
 	/*Tableau de caractères valant l'option*/
 	char* option = malloc(sizeof(char) * 100);
 
-	strcpy(option, str);
-
 	/*
 	Tant qu'il y a des options...
 	*/
@@ -47,7 +44,7 @@ int parseFichierHTML(char* str, char** tabOptions) {
 		/*
 		Décalage de la longueur de OPTION
 		*/
-		str = str + strlen(OOPTION);
+		str = str + (strlen(OOPTION)+4);
 
 		char* finOption = malloc(sizeof(char) * strlen(str));
 
@@ -55,24 +52,23 @@ int parseFichierHTML(char* str, char** tabOptions) {
 		On recherche après la fin de la balise
 		*/
 		if ((finOption = strstr(str, EOPTION)) != NULL) {
-
+			
 			/*
 			Longueur de l'option
 			*/
-			positionEOption = str - finOption + 1;
+			positionEOption = finOption - str;
 
-			char* aCopier = str+positionEOption;
-
-			strcpy(option, aCopier);
+			strncpy(option, str, positionEOption);
 
 			/*
 			Enregistrement
 			*/
 			strcpy(tabOptions[i],option);
 
-			free(finOption);
+			/*free(finOption);*/
 
 			i++;
+
 		}
 		/*
 		Si pas de balise de fin, on s'arrête (car le WebDev' a fait une bêtise!!)
