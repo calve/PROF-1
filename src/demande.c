@@ -64,46 +64,42 @@ void demandeMDP(char* mdpFIL) {
  */
 char* demandeChemin(char* cheminFichier) {
 
-	char* home = getcwd(cheminFichier, PATH_MAX);
+	char* home = malloc(sizeof(char) * PATH_MAX);
         char* resolved_path = malloc(sizeof(char) * PATH_MAX);
+        char* tmp;
+        int i;
 
-	home = strcat(home, "/");
+        home = getcwd(home, PATH_MAX);
+        home = strcat(home,"/");
 
 	printf("Entrez le chemin du fichier/dossier à transférer sur PROF:\n");
         cheminFichier = readline(home);
-	cheminFichier = strcat(home, cheminFichier);
-        realpath(cheminFichier, resolved_path);
-	printf("cheminFichier: %s\n",cheminFichier);
-        printf("cheminFichier : %s\n",cheminFichier);
-        printf("resolved_path : %s\n",resolved_path);
-        printf("realpath(cheminFichier, resolved_path);\n");
-        if ( realpath(cheminFichier, resolved_path) == NULL ){
-          printf("real path failed, errno %d \n", errno);
-          if (errno == EACCES)
-            printf("EACCES");
-          if ( errno == EINVAL)
-            printf("EINVAL");
-          if (errno == EIO)
-            printf("EIO");
-          if (errno == ELOOP)
-            printf("ELOOP");
-          if (errno == ENOTDIR)
-            printf("ENOTDIR");
-          if (errno == ENOENT)
-            {
-              printf("ENOENT");
-              if (access(resolved_path, F_OK) == 0)
-                printf(" ... access ok\n");
-            }
 
-          if (errno == ENAMETOOLONG)
-            printf("ENAMETOOLONG");
-          printf("\n");
+        // Remove trailing space if one
+        for (i = 0; i < PATH_MAX ; i++){
+          if (cheminFichier[i] =='\0') { // End of user input
+            if (cheminFichier[i-1] ==' '){ // Trailing space
+              tmp = readline("Remove one suspicious trailing space ? [Y/n] : ");
+              if (tmp[0] != 'n'){ // Delete it
+                cheminFichier[i-1] = '\0';
+              }
+            }
+            break;
+          }
         }
-        printf("cheminFichier : %s\n",cheminFichier);
-        printf("resolved_path : %s\n",resolved_path);
-        printf("cheminFichier = resolved_path;\n");
-        cheminFichier = resolved_path;
+
+	cheminFichier = strcat(home, cheminFichier);
+        resolved_path = realpath(cheminFichier, resolved_path);
+
+        if ( resolved_path == NULL ){
+          {
+            printf("Error reading file");
+            return NULL;
+          }
+        }
+
+        strcpy(cheminFichier, resolved_path);
+        free(resolved_path);
 
 	return cheminFichier;
 }
