@@ -12,7 +12,9 @@ Encore en développement - test sur machine **Gnu/Linux** et **FreeBSD** (_MacOS
 
 Utilisation de _Doxygen_ pour la génération de la documentation du programme (Free Software - [site internet](http://www.stack.nl/~dimitri/doxygen/)).
 
-Utilisation de l'interface _libcurl_ (voir [site internet](http://curl.haxx.se/libcurl/) pour la documentation et l'installation).
+Utilisation de la librairie _readline_ (voir [site internet](http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html) pour la documentation et l'installation).
+
+Utilisation de la librairie _libcurl_ (voir [site internet](http://curl.haxx.se/libcurl/) pour la documentation et l'installation).
 
 Utilisation de la librairie _libzip_ (voir [site internet](http://www.nih.at/libzip/) pour la documentation et l'installation).
 
