@@ -478,6 +478,66 @@ int main() {
 	*/
 	printf("Matière choisie: %s\n", tabMatieres[choixMatiere]);
 
+	char* numeroMatiere = malloc(sizeof(char) * 1);
+	sprintf(numeroMatiere, "%d", choixMatiere);
+
+	char* matiereChoisie = malloc(sizeof(char) * 14);
+	strcpy(matiereChoisie, "id_projet=");
+	matiereChoisie = strcat(matiereChoisie, numeroMatiere);
+
+	printf("matiereChoisie: %s\n",matiereChoisie);
+
+	/*
+	Reset - Envoie des données pour arriver sur les sous-options
+	*/
+
+	curl_easy_reset(curl);
+
+	curl_easy_setopt(curl, CURLOPT_URL, URL_MAIN);
+	curl_easy_setopt(curl, CURLOPT_VERBOSE, DEBUG);
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+	curl_easy_setopt(curl, CURLOPT_POST, 1);
+	/*
+	On accepte les redirections
+	*/
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt(curl, CURLOPT_POSTREDIR, 3);
+	/*
+	Données POST
+	*/
+	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, matiereChoisie);
+	/*
+	Ajout/Suivi de cookies
+    */
+	curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+	/*
+	Enregistrement de la page Web
+	*/
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFonction);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &str);
+	/*
+	Envoie des données
+	*/
+	res = curl_easy_perform(curl);
+
+	if(CURLE_OK != res)
+    {
+    	printf(" ERREUR\n");
+        printf("ERREUR: %s\n", strerror(res));
+        exit(EXIT_FAILURE);
+    }
+
+	/*
+	Envoie des données
+	*/
+	res = curl_easy_perform(curl);
+
+	/*
+	On désalloue les variables précédemment initialisées
+	*/
+	free(numeroMatiere);
+	free(matiereChoisie);
+
 	/*
 
 	-> Choix du rendu
