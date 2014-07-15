@@ -431,7 +431,7 @@ int main() {
 	/*
 	Récupération de la page HTML dans un fichier - Parse + récupération de la liste des matières - affichage
 	*/
-	if (parseFichierHTML(str.ptr, tabMatieres) != 0) {
+	if (parseFichierMatiere(str.ptr, tabMatieres) != 0) {
 		for (i = 0; i < 20; i++) {
 			free(tabMatieres[i]);
 		}
