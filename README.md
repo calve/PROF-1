@@ -32,7 +32,7 @@ Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxy
 	*	si fichier, vérification déjà zippé: OK
 	*	zip automatique du fichier/dossier si non-zippé: OK - **A VERIFIER**
 	*	connexion avec PROF: OK
-	*	parser options/rendus des options: OK - **A TESTER**
+	*	parser options/rendus des options: OK - **EN COURS**
 	*	renommage du fichier zippé selon login + matière: **TODO**
 	*	dépot du fichier zippé: **TODO**
 	*	vérification de la bonne conformité du rendu: **TODO**
