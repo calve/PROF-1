@@ -313,9 +313,11 @@ int main() {
 	char identifiantFIL[LONGUEUR_ID];
 	char motDePasseFIL[LONGUEUR_MDP];
 	char cheminFichier[PATH_MAX];
-	int longueurTabOptions = 0;
+	int longueurTabMat = 0;
 	int choixMatiere = -1;
+	/*
 	int choixRendu = -1;
+	*/
 	CURL *curl;
 	CURLcode res;
 	
@@ -434,12 +436,12 @@ int main() {
 		exit(EXIT_FAILURE);
 	}
 
-	longueurTabOptions = strlen(*tabMatieres);
+	longueurTabMat = strlen(*tabMatieres);
 
 	/*
 	Si pas d'options (matière) -> rien à rendre!
 	*/
-	if (longueurTabOptions==0) {
+	if (longueurTabMat==0) {
 		for (i = 0; i < 20; i++) {
 			if (tabMatieres[i] != NULL)
 				free(tabMatieres[i]);
@@ -455,7 +457,7 @@ int main() {
 	/*
 	Impression des options concernant les matières
 	*/
-	for (i = 0; i < longueurTabOptions; i++) {
+	for (i = 0; i < longueurTabMat; i++) {
 
 		printf("\t -> Matière [%d]: %s\n", i, tabMatieres[i]);
 
@@ -466,13 +468,13 @@ int main() {
 	/*
 	Choix quant à la matière
 	*/
-	while ((choixMatiere < 0) || (choixMatiere >= longueurTabOptions))
+	while ((choixMatiere < 0) || (choixMatiere >= longueurTabMat))
 		demandeMatiere(&choixMatiere);
 
 	/*
 	Choix quant au rendu, dans la matière
 	*/
-	printf("Matière choisie: %s\n", tabOptions[choixMatiere]);
+	printf("Matière choisie: %s\n", tabMatieres[choixMatiere]);
 
 	/*
 
