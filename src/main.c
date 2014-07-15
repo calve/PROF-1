@@ -315,6 +315,7 @@ int main() {
 	char cheminFichier[PATH_MAX] = "~/";
 	int longueurTabOptions = 0;
 	int choixMatiere = -1;
+	int choixRendu = -1;
 	CURL *curl;
 	CURLcode res;
 	
@@ -401,10 +402,10 @@ int main() {
 	/*
 	Tableau de 20 options max, chaque option faisant 100 caractères max
 	*/
-	char **tabOptions = (char**) malloc(sizeof(char*) * 20);
+	char **tabMatieres = (char**) malloc(sizeof(char*) * 20);
 
-	if (tabOptions == NULL) {
-		printf("ERREUR: Malloc concernant tabOptions\n");
+	if (tabMatieres == NULL) {
+		printf("ERREUR: Malloc concernant tabMatieres\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -414,9 +415,9 @@ int main() {
 	Chaque entrée est de 100 caractères
 	*/
 	for (i = 0; i < 20; i++) {
-		tabOptions[i] = (char*) malloc(sizeof(char) * 100);
-		if (tabOptions[i] == NULL) {
-			printf("ERREUR: Malloc concernant tabOptions[%d]\n",i);
+		tabMatieres[i] = (char*) malloc(sizeof(char) * 100);
+		if (tabMatieres[i] == NULL) {
+			printf("ERREUR: Malloc concernant tabMatieres[%d]\n",i);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -424,27 +425,27 @@ int main() {
 	/*
 	Récupération de la page HTML dans un fichier - Parse + récupération de la liste des matières - affichage
 	*/
-	if (parseFichierHTML(str.ptr, tabOptions) != 0) {
+	if (parseFichierHTML(str.ptr, tabMatieres) != 0) {
 		for (i = 0; i < 20; i++) {
-			free(tabOptions[i]);
+			free(tabMatieres[i]);
 		}
-		free(tabOptions);
+		free(tabMatieres);
 		printf("ERREUR: Erreur lors du parsing HTML\n");
 		exit(EXIT_FAILURE);
 	}
 
-	longueurTabOptions = strlen(*tabOptions);
+	longueurTabOptions = strlen(*tabMatieres);
 
 	/*
 	Si pas d'options (matière) -> rien à rendre!
 	*/
 	if (longueurTabOptions==0) {
 		for (i = 0; i < 20; i++) {
-			if (tabOptions[i] != NULL)
-				free(tabOptions[i]);
+			if (tabMatieres[i] != NULL)
+				free(tabMatieres[i]);
 		}
-		if (tabOptions != NULL)
-			free(tabOptions);
+		if (tabMatieres != NULL)
+			free(tabMatieres);
 		printf("Pas de matières à choisir -> pas de TD/TP à rendre...Chanceux!\n");
 		exit(EXIT_SUCCESS);
 	};
@@ -456,7 +457,7 @@ int main() {
 	*/
 	for (i = 0; i < longueurTabOptions; i++) {
 
-		printf("\t -> Matière [%d]: %s\n", i, tabOptions[i]);
+		printf("\t -> Matière [%d]: %s\n", i, tabMatieres[i]);
 
 	}
 
@@ -467,6 +468,21 @@ int main() {
 	*/
 	while ((choixMatiere < 0) || (choixMatiere >= longueurTabOptions))
 		demandeMatiere(&choixMatiere);
+
+	/*
+	Choix quant au rendu, dans la matière
+	*/
+	printf("Matière choisie: %s\n", tabOptions[choixMatiere]);
+
+	/*
+
+	-> Choix du rendu
+		-> Si longueur tabRendu == 0 -> Pas de rendu à faire, on quitte
+		-> Sinon, choix du rendu
+
+	while ((choixRendu < 0) || (choixRendu >= longueurTabRendu))
+		demandeRendu(&choixRendu);
+	*/
 
 	/*
 	Envoi!
