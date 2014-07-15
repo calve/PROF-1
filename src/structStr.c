@@ -21,7 +21,7 @@ struct string {
  * \fn void initStructString(struct string *s)
  * \brief Fonction permettant d'initialiser la structure string
  *
- * \param string Une structure string
+ * \param s Une structure string
  */
 void initStructString(struct string *s) {
   s->len = 0;
