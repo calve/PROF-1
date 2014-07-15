@@ -455,7 +455,7 @@ int main() {
 	/*
 	Impression des options concernant les matières
 	*/
-	for (i = 0; i < longueurTabMat; i++) {
+	for (i = 1; i < longueurTabMat; i++) {
 
 		if (strlen(tabMatieres[i]) != 0)
 			printf("\t -> Matière [%d]: %s\n", i, tabMatieres[i]);
