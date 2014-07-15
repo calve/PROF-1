@@ -58,7 +58,7 @@ int parseFichierMatiere(char* str, char** tabMatieres) {
 	int positionEOption = 0;
 	int i = 0;
 
-	/*Tableau de caractères valant l'option*/
+	/*Tableau de caractères, qui va contenir la matière*/
 	char* option = malloc(sizeof(char) * 100);
 
 	/*
