@@ -112,3 +112,72 @@ int parseFichierMatiere(char* str, char** tabMatieres) {
 	return 0;
 
 }
+
+/**
+ * \fn int parseFichierRendus(char* str, char** tabRendus)
+ * \brief Fonction permettant de parser le fichier HTML/PHP contenant tous les rendus accessibles pour une matière
+ *
+ * \param str Une chaîne valant la page PHP de sélection de projets
+ * \param tabRendus Un tableau de chaînes de caractères, valant toutes un rendu pour la matière demandée
+ * \return Un entier: 0 si la fonction s'est bien exécuté - 1 si la balise EOPTION n'a pas été trouvé...
+ */
+int parseFichierRendus(char* str, char** tabRendus) {
+
+	int positionERendu = 0;
+	int i = 0;
+
+	/*Chaîne de caractères valant le nom du rendu*/
+	char* rendu = malloc(sizeof(char) * 100);
+
+	/*
+	Tant qu'il y a des options...
+	*/
+	while ((str = strstr(str, OAHREF)) != NULL) {
+
+		/*
+		Décalage de la longueur de OAHREFX')"> || OAHREFXX')">
+		*/
+		if (i < 10)
+			str = str + (strlen(OAHREF)+5);
+		else
+			str = str + (strlen(OAHREF)+6);
+
+		char* finRendu = malloc(sizeof(char) * strlen(str));
+
+		/*
+		On recherche après la fin de la balise
+		*/
+		if ((finRendu = strstr(str, EAHREF)) != NULL) {
+			
+			/*
+			Longueur de l'option
+			*/
+			positionERendu = finRendu - str;
+
+			strncpy(rendu, str, positionERendu);
+
+			rendu[positionERendu] = '\0';
+
+			/*
+			Enregistrement
+			*/
+			strcpy(tabRendus[i],rendu);
+
+			i++;
+
+		}
+		/*
+		Si pas de balise de fin, on s'arrête (car le WebDev' a fait une bêtise!!)
+		*/
+		else {
+			free(finRendu);
+			return 1;
+		}
+
+	}
+
+	free(rendu);
+
+	return 0;
+
+}
