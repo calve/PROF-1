@@ -62,6 +62,4 @@ Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxy
 
 ####Contact:
 
-Carette Antonin
-
-[Envoyer un e-mail](mailto:antonin.carette@gmail.com)
+*	Carette Antonin - [Envoyer un e-mail](mailto:antonin.carette@gmail.com)
