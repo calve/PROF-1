@@ -16,6 +16,7 @@
 #include <pwd.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <limits.h>
 
 #include "demande.h"
 #include "suppr.h"
@@ -281,26 +282,13 @@ static int verificationZip(char* cheminFichier) {
 }
 
 /**
- * \fn static int demandeChemin(char *cheminFichier)
- * \brief Fonction permettant de demander le chemin du dossier/fichier
+ * \fn static int verificationCheminEtZip(char* cheminFichier)
+ * \brief Fonction permettant de vérifier si le chemin vers le fichier/dossier est accessible, s'il s'agit d'un fichier déjà zippé ou non
  *
- * \param cheminFichier Une chaine de caractères (PATH_MAX max), destinée à recevoir le chemin donné au dossier/fichier
- * \return Retourne un entier: EXIT_SUCCESS si la fonction a bien été exécuté, EXIT_FAILURE si erreur
+ * \param cheminFichier Le chemin menant vers le fichier/dossier devant être rendu
+ * \return Un entier: 0 si la fonction s'est bien exécutée, EXIT_FAILURE sinon
  */
-static int demandeChemin(char *cheminFichier) {
-
-	char* cheminEntre = malloc(sizeof(char) * PATH_MAX);
-	struct passwd* passwdEnt = getpwuid(getuid());
-	char* home = passwdEnt->pw_dir;
-
-	home = strcat(home, "/");
-
-	printf("Entrez le chemin du fichier/dossier à transférer sur PROF:\n");
-	printf("%s",home);
-	fgets(cheminEntre, PATH_MAX, stdin);
-	supprimeCaractere(cheminEntre, '\n');
-	cheminFichier = strcat(home, cheminEntre);
-
+static int verificationCheminEtZip(char* cheminFichier){
 	/*
 	Vérification chemin + zip
 	*/
@@ -334,7 +322,9 @@ int main() {
 
 	demandeMDP(motDePasseFIL);
 
-	demandeChemin(cheminFichier);
+	strcpy(cheminFichier,demandeChemin(cheminFichier));
+
+	verificationCheminEtZip(cheminFichier);
 
 	curl_global_init(CURL_GLOBAL_ALL);
 
