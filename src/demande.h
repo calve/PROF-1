@@ -14,5 +14,6 @@
 void demandeLogin(char*);
 void demandeMDP(char*);
 char* demandeChemin(char*);
+void demandeMatiere(int*);
 
 #endif
