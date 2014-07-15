@@ -322,14 +322,17 @@ int main() {
 
 	demandeMDP(motDePasseFIL);
 
+	/*Copie du chemin donné par l'utilisateur*/
 	strcpy(cheminFichier,demandeChemin(cheminFichier));
 
+	/*Vérification de la bonne conformité du chemin, et vérification si déjà zippé/non-zippé (on zip alors)*/
 	verificationCheminEtZip(cheminFichier);
 
+	/*CONNEXION*/
 	curl_global_init(CURL_GLOBAL_ALL);
 
 	/*
-	Connection sur PROF (prof.fil.univ-lille1.fr) avec ID + MDP
+	Connexion sur PROF (prof.fil.univ-lille1.fr) avec ID + MDP
 	*/
 
 	printf("Demande de login...\n");
@@ -438,7 +441,7 @@ int main() {
 		}
 		if (tabOptions != NULL)
 			free(tabOptions);
-		printf("Pas de matières à choisir -> pas de TP à rendre...Chanceux!\n");
+		printf("Pas de matières à choisir -> pas de TD/TP à rendre...Chanceux!\n");
 		exit(EXIT_SUCCESS);
 	};
 
