@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <limits.h>
+#include <readline/readline.h>
 #include "suppr.h"
 
 /** 
@@ -62,20 +63,42 @@ void demandeMDP(char* mdpFIL) {
  */
 char* demandeChemin(char* cheminFichier) {
 
-	char* cheminEntre = malloc(sizeof(char) * PATH_MAX);
-	struct passwd* passwdEnt = getpwuid(getuid());
-	char* home = passwdEnt->pw_dir;
+	char* home = malloc(sizeof(char) * PATH_MAX);
+        char* resolved_path = malloc(sizeof(char) * PATH_MAX);
+        char* tmp;
+        int i;
 
-	home = strcat(home, "/");
+        home = getcwd(home, PATH_MAX);
+        home = strcat(home,"/");
 
 	printf("Entrez le chemin du fichier/dossier à transférer sur PROF:\n");
-	printf("%s",home);
-	fgets(cheminEntre, PATH_MAX, stdin);
-	supprimeCaractere(cheminEntre, '\n');
-	cheminFichier = strcat(home, cheminEntre);
-	printf("cheminFichier: %s\n",cheminFichier);
+        cheminFichier = readline(home);
 
-	free(cheminEntre);
+        // Remove trailing space if one
+        for (i = 0; i < PATH_MAX ; i++){
+          if (cheminFichier[i] =='\0') { // End of user input
+            if (cheminFichier[i-1] ==' '){ // Trailing space
+              tmp = readline("Remove one suspicious trailing space ? [Y/n] : ");
+              if (tmp[0] != 'n'){ // Delete it
+                cheminFichier[i-1] = '\0';
+              }
+            }
+            break;
+          }
+        }
+
+	cheminFichier = strcat(home, cheminFichier);
+        resolved_path = realpath(cheminFichier, resolved_path);
+
+        if ( resolved_path == NULL ){
+          {
+            printf("Error reading file");
+            return NULL;
+          }
+        }
+
+        strcpy(cheminFichier, resolved_path);
+        free(resolved_path);
 
 	return cheminFichier;
 }

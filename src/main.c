@@ -312,7 +312,7 @@ int main() {
 
 	char identifiantFIL[LONGUEUR_ID];
 	char motDePasseFIL[LONGUEUR_MDP];
-	char cheminFichier[PATH_MAX] = "~/";
+	char cheminFichier[PATH_MAX];
 	int longueurTabOptions = 0;
 	int choixMatiere = -1;
 	int choixRendu = -1;

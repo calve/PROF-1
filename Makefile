@@ -19,6 +19,7 @@ PROF=bin/prof
 OPTIONS=-Wall -W
 CURLLINK=-lcurl
 ZLIBLINK=-lzip
+READLINELINK=-lreadline
 OBJECTS=src/*.o
 
 ifeq ($(DEMDEBUG),yes)
@@ -44,7 +45,7 @@ parse: $(PARSE)
 
 main: $(MAIN)
 ifeq ($(DEMDEBUG),yes)
-	$(CC) -DNDEBUG $(OPTIONS) $(DEMANDEO) $(SUPPRO) $(STRUCTSTRO) $(PARSEO) $(MAIN) $(ZLIBLINK) $(CURLLINK) -v -o $(PROF)
+	$(CC) -DNDEBUG $(OPTIONS) $(DEMANDEO) $(SUPPRO) $(STRUCTSTRO) $(PARSEO) $(MAIN) $(ZLIBLINK) $(CURLLINK) $(READLINELINK) -v -o $(PROF)
 else
 	$(CC) $(OPTIONS) $(DEMANDEO) $(SUPPRO) $(STRUCTSTRO) $(PARSEO) $(MAIN) $(ZLIBLINK) $(CURLLINK) -o $(PROF)
 endif
