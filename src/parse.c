@@ -16,10 +16,34 @@
 #define OOPTION "<OPTION\nVALUE="
 
 /**
+ * \def OAHREF
+ * \brief Macro contenant le début de déclaration d'un rendu - s'ensuit X')">
+ */
+#define OAHREF "<a\n	  \nhref=\"javascript:popup('popup.php?id_echeance="
+
+/**
+ * \def ORENDU
+ * \brief Macro contenant le début de déclaration d'une information pour un rendu
+ */
+#define ORENDU "<td align=center>"
+
+/**
  * \def EOPTION
  * \brief Macro contenant la balise HTML de fin d'option - on considère ici la fin de déclaration d'une matière
  */
 #define EOPTION "</OPTION>"
+
+/**
+ * \def EAHREF
+ * \brief Macro contenant la fin de déclaration d'un rendu
+ */
+#define EAHREF "</a>"
+
+/**
+ * \def ERENDU
+ * \brief Macro contenant la fin de déclaration d'une information pour un rendu
+ */
+#define ERENDU "</td>"
 
 /**
  * \fn int parseFichierHTML(char* str)
