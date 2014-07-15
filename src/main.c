@@ -459,7 +459,10 @@ int main() {
 	*/
 	for (i = 0; i < longueurTabMat; i++) {
 
-		printf("\t -> Matière [%d]: %s\n", i, tabMatieres[i]);
+		if (strlen(tabMatieres[i]) != 0)
+			printf("\t -> Matière [%d]: %s\n", i, tabMatieres[i]);
+		else
+			break;
 
 	}
 
