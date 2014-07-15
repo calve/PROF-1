@@ -583,7 +583,7 @@ int main() {
 	longueurTab = strlen(*tabRendus);
 
 	/*
-	Si pas de rendus -> rien à rendre!
+	Si pas de rendus OU si le temps est dépassé (TODO) -> rien à rendre!
 	*/
 	if (longueurTab==0) {
 		for (i = 0; i < 20; i++) {
