@@ -34,7 +34,7 @@ Installer doxygen (voir ci-dessus), et modifier le fichier de configuration Doxy
 	*	connexion avec PROF: OK
 	*	parser options/rendus des options: OK - **EN COURS**
 	*	renommage du fichier zippé selon login + matière: **TODO**
-	*	dépot du fichier zippé: **TODO**
+	*	dépot du fichier zippé: **EN COURS**
 	*	vérification de la bonne conformité du rendu: **TODO**
 2.	Synchronisation automatique des TP (avec horlogerie)
 
