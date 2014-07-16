@@ -12,6 +12,7 @@
 #include <pwd.h>
 #include <limits.h>
 #include <readline/readline.h>
+#include <termios.h>
 #include "suppr.h"
 
 /** 
@@ -47,9 +48,25 @@ void demandeLogin(char* idFIL) {
  * \param mdpFIL Une chaîne de caractères (15 caractères), destinée à recevoir le mot-de-passe de l'utilisateur
  */
 void demandeMDP(char* mdpFIL) {
+	struct termios old, new;
+
+	/* Retreive and save current terminal informations. */
+	if (tcgetattr (fileno (stdin), &old) != 0)
+		printf("failed to retreive terminfo\n");
+	new = old;
+
+	/* Turn echo off */
+	new.c_lflag &= ~ECHO;
+	new.c_lflag |= ECHONL;
+	if (tcsetattr (fileno (stdin), TCSANOW, &new) != 0)
+		printf("failed to turn echo off\n");
 
 	printf("Entrez votre mot de passe FIL:");
 	fgets(mdpFIL, LONGUEUR_MDP, stdin);
+
+	/* Restore old terminal. */
+	(void) tcsetattr (fileno (stdin), TCSANOW, &old);
+
 	supprimeCaractere(mdpFIL, '\n');
 
 }
